@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "537870062984",
+    "firebase_url": "https://farm-pro-85764-default-rtdb.firebaseio.com",
+    "project_id": "farm-pro-85764",
+    "storage_bucket": "farm-pro-85764.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:537870062984:android:4b90c952ab4eb2c144963d",
+        "android_client_info": {
+          "package_name": "com.example.farm_pro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCh2Rw6iu9xZp9P86ba_K5QQboq2RqE5J8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
