@@ -131,7 +131,7 @@ class _DetailsCardState extends State<DetailsCard> {
 
                     //about
 
-                    CustomDivider(),
+                    //CustomDivider(),
 
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -156,7 +156,7 @@ class _DetailsCardState extends State<DetailsCard> {
                     ),
 
                     //farm images
-                    CustomDivider(),
+                    //CustomDivider(),
 
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,

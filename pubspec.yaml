@@ -38,7 +38,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   google_fonts: ^6.1.0
   cloud_firestore: ^4.14.0
-  firebase_core: ^2.24.2
+  firebase_core: ^2.32.0
   url_launcher: ^6.2.5
   image_gradient: ^0.0.2
   google_sign_in: ^6.2.1
@@ -51,6 +51,8 @@ dependencies:
   flutter_cached_pdfview: ^0.4.2
   flutter_pannable_rating_bar: ^2.7.2+1
   flutter_rating_bar: ^4.0.1
+  google_maps_flutter: ^2.2.8
+  firebase_database: ^10.5.7
 
 
 

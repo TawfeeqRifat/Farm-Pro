@@ -7,7 +7,7 @@ final details ={
     'name': "Hitori Goto",
     'contact_details': {
         'pno':'+91 1234567809',
-        'mail_id':'example@gmail.com'
+        'mail_id':'hitoriGoto@gmail.com'
     },
     'farm_type':[
       'Crop Farm',
@@ -15,41 +15,42 @@ final details ={
       'Fruit Orchards'
     ],
     'about':'I play guitar.\nSometimes farm.',
-    'farm_images':[
-      'https://lostinanime.com/wp-content/uploads/2023/01/Vinland-Saga-Season-2-02-25.jpg',
-      'https://i.pinimg.com/736x/bf/a2/75/bfa275837cbc47424ea98a8244b67ff4.jpg'
+    "farm_images":[
+      "https://lostinanime.com/wp-content/uploads/2023/01/Vinland-Saga-Season-2-02-25.jpg",
+      "https://i.pinimg.com/736x/bf/a2/75/bfa275837cbc47424ea98a8244b67ff4.jpg"
     ],
-    'rating' : {
-      'rate' : 5.0,
-      'noOfRating' : 10
+    "address": "SASTRA DEEMED UNIVERSITY\nTirumalaisamudram\nThanjavur - 613401\nTamilnadu, India",
+    "rating" : {
+      "rate" : 5.0,
+      "noOfRating" : 10
     },
-    'rated': {
-        'hitorigoto' : 5.0,
+    "rated": {
+        "hitorigoto" : 5.0,
     }
   },
-  'hachiman hikigaya': {
-    'id': 'hachiman hikigaya',
-    'profile': 'https://qph.cf2.quoracdn.net/main-qimg-8578910fde7d932c3ff42291113a2a5f-lq',
-    'name': "Hachiman Hikigaya",
-    'contact_details': {
-      'pno':'91-1234567809',
-      'mail_id':'example@gmail.com'
+  "hachiman hikigaya": {
+    "id": "hachiman hikigaya",
+    "profile": "https://qph.cf2.quoracdn.net/main-qimg-8578910fde7d932c3ff42291113a2a5f-lq",
+    "name": "Hachiman Hikigaya",
+    "contact_details": {
+      "pno":"91-1234567809",
+      "mail_id":"8man@gmail.com",
     },
-    'farm_type':[
-      'Crop Farm',
-      'Diary Farm',
-      'Fruit Orchards'
+    "farm_type":[
+      "Crop Farm",
+      "Diary Farm",
+      "Fruit Orchards"
     ],
-    'about':'I play guitar.\nSometimes farm.',
+    "about":"I play guitar.\nSometimes farm.",
     'farm_images':[
       'https://lostinanime.com/wp-content/uploads/2023/01/Vinland-Saga-Season-2-02-25.jpg',
       'https://i.pinimg.com/736x/bf/a2/75/bfa275837cbc47424ea98a8244b67ff4.jpg'
     ],
-    'rating' : {
-      'rate' : 5.0,
-      'noOfRating' : 5
+    "rating" : {
+      "rate": 5.0,
+      "noOfRating" : 5
     },
-    'rated': {
+    "rated": {
 
     }
   },
@@ -59,7 +60,7 @@ final details ={
     'name': "Thorfinn",
     'contact_details': {
       'pno':'91-1234567809',
-      'mail_id':'example@gmail.com'
+      'mail_id':'noEnemies@gmail.com'
     },
     'farm_type':[
       'Crop Farm',
@@ -85,7 +86,7 @@ final details ={
     'name': "Einar",
     'contact_details': {
       'pno':'91-1234567809',
-      'mail_id':'example@gmail.com'
+      'mail_id':'maidenLess@gmail.com'
     },
     'farm_type':[
       'Crop Farm',
@@ -111,7 +112,7 @@ final details ={
     'name': "Zoro",
     'contact_details': {
       'pno': '91-1234567809',
-      'mail_id': 'example@gmail.com'
+      'mail_id': 'greenKaido@gmail.com'
     },
     'farm_type': [
       'Crop Farm',

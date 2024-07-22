@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "539505907325",
+    "firebase_url": "https://farm-pro-2a193-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "farm-pro-2a193",
     "storage_bucket": "farm-pro-2a193.appspot.com"
   },
@@ -12,7 +13,20 @@
           "package_name": "com.example.farm_pro"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "539505907325-aq6s0lkcbu40kq0crvpcc77botl6jh9f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.farm_pro",
+            "certificate_hash": "d97eb8d8fbe51de39b938f14cd89fb9f5f69a8cd"
+          }
+        },
+        {
+          "client_id": "539505907325-rv5t4ig6ducp4s16f76u6j11p9l7ec7g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAvw6V-WXp03tOJ0TUdkLm6eo4v549R-zU"
@@ -20,7 +34,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "539505907325-rv5t4ig6ducp4s16f76u6j11p9l7ec7g.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "539505907325-ts3560g96m00dtmdovbi1o3iel0shb4d.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.farmPro"
+              }
+            }
+          ]
         }
       }
     }

@@ -20,7 +20,10 @@ class HorizontalPadding extends StatelessWidget {
 }
 
 class CustomDivider extends StatelessWidget {
-  const CustomDivider({super.key});
+  const CustomDivider({super.key,this.color,this.thickness,this.borderRadius});
+  final Color? color;
+  final double? thickness;
+  final double? borderRadius;
 
   @override
   Widget build(BuildContext context) {
@@ -28,16 +31,13 @@ class CustomDivider extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-       VerticalPadding(paddingSize: 40),
         Container(
-          width: 335,
-          height: 4,
+          height: thickness ?? 3,
           decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(35),
-          color: Colors.white,
+          borderRadius: BorderRadius.circular(borderRadius??35),
+          color: color ?? Colors.black,
         ),
       ),
-       VerticalPadding(paddingSize: 40),
         ],
       ),
     );

@@ -40,8 +40,8 @@ class _SchemeAdvancedState extends State<SchemeAdvanced> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  for(var i in widget.scheme['topics'].keys)
-                    Topics(currentTopic: widget.scheme['topics'][i]),
+                  for(var i in widget.scheme['topics'])
+                    Topics(currentTopic: i),
                 ],
               ),
             ),

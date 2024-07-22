@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:farm_pro/Utilities/CustomWidgets.dart';
+import 'package:farm_pro/pages/detailsAdvanced.dart';
+import 'package:farm_pro/pages/details_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -26,14 +28,14 @@ class _DetailsPageState extends State<DetailsPage> {
 
 
     List<AgrItemCard> items=[
-      AgrItemCard(itemName: 'Onion',itemLink: 'https://cdn.pixabay.com/photo/2020/05/18/15/54/onion-5187140_640.jpg',itemStatus: 1),
-      AgrItemCard(itemName: 'Beans',itemLink: 'https://seed2plant.in/cdn/shop/products/Beansseeds.jpg?v=1603967248',itemStatus: 2,),
-      AgrItemCard(itemName: 'Tomato',itemLink: 'https://images.pexels.com/photos/533280/pexels-photo-533280.jpeg?cs=srgb&dl=pexels-pixabay-533280.jpg&fm=jpg',itemStatus: 3,),
-      AgrItemCard(itemName: 'Beans',itemLink: 'https://seed2plant.in/cdn/shop/products/Beansseeds.jpg?v=1603967248',itemStatus: 1,),
-      AgrItemCard(itemName: 'Onion',itemLink: 'https://cdn.pixabay.com/photo/2020/05/18/15/54/onion-5187140_640.jpg',itemStatus: 2),
-      AgrItemCard(itemName: 'Beans',itemLink: 'https://seed2plant.in/cdn/shop/products/Beansseeds.jpg?v=1603967248',itemStatus: 3,),
-      AgrItemCard(itemName: 'Tomato',itemLink: 'https://images.pexels.com/photos/533280/pexels-photo-533280.jpeg?cs=srgb&dl=pexels-pixabay-533280.jpg&fm=jpg',itemStatus: 1,),
-      AgrItemCard(itemName: 'Beans',itemLink: 'https://seed2plant.in/cdn/shop/products/Beansseeds.jpg?v=1603967248',itemStatus: 2,),
+      const AgrItemCard(itemName: 'Onion',itemLink: 'https://cdn.pixabay.com/photo/2020/05/18/15/54/onion-5187140_640.jpg',itemStatus: 1),
+      const AgrItemCard(itemName: 'Beans',itemLink: 'https://seed2plant.in/cdn/shop/products/Beansseeds.jpg?v=1603967248',itemStatus: 2,),
+      const AgrItemCard(itemName: 'Tomato',itemLink: 'https://images.pexels.com/photos/533280/pexels-photo-533280.jpeg?cs=srgb&dl=pexels-pixabay-533280.jpg&fm=jpg',itemStatus: 3,),
+      const AgrItemCard(itemName: 'Beans',itemLink: 'https://seed2plant.in/cdn/shop/products/Beansseeds.jpg?v=1603967248',itemStatus: 1,),
+      const AgrItemCard(itemName: 'Onion',itemLink: 'https://cdn.pixabay.com/photo/2020/05/18/15/54/onion-5187140_640.jpg',itemStatus: 2),
+      const AgrItemCard(itemName: 'Beans',itemLink: 'https://seed2plant.in/cdn/shop/products/Beansseeds.jpg?v=1603967248',itemStatus: 3,),
+      const AgrItemCard(itemName: 'Tomato',itemLink: 'https://images.pexels.com/photos/533280/pexels-photo-533280.jpeg?cs=srgb&dl=pexels-pixabay-533280.jpg&fm=jpg',itemStatus: 1,),
+      const AgrItemCard(itemName: 'Beans',itemLink: 'https://seed2plant.in/cdn/shop/products/Beansseeds.jpg?v=1603967248',itemStatus: 2,),
     ];
     items.sort((a,b)=>a.itemStatus.compareTo(b.itemStatus));
     String farmerRating;
@@ -43,6 +45,8 @@ class _DetailsPageState extends State<DetailsPage> {
     else{
       farmerRating=widget.detail['rating']['rate'].toStringAsFixed(2);
     }
+
+
     return Scaffold(
       body: Column(
             children: [
@@ -51,45 +55,55 @@ class _DetailsPageState extends State<DetailsPage> {
                   height: 300,
                   child:  Stack(
                     children: [
-                      Container(
-                        height: 250,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                              colors: [
-                                Colors.transparent,
-                                Color(0xFF95C19E),
-                              ],
-                              transform: GradientRotation(6)
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context)=>DetailsAdvanced(farmerDetails: widget.detail)));
+                        },
+                        child: Container(
+                          height: 250,
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                                colors: [
+                                  Colors.transparent,
+                                  Color(0xFF95C19E),
+                                ],
+                                transform: GradientRotation(6)
+                            ),
                           ),
-                        ),
-                        child: CachedNetworkImage(
-                          imageUrl: '',
-                          errorWidget: (context,url,error)=> Container(),
-                          fit: BoxFit.cover,
-                          colorBlendMode: BlendMode.dstIn,
+                          child: CachedNetworkImage(
+                            imageUrl: '',
+                            errorWidget: (context,url,error)=> Container(),
+                            fit: BoxFit.cover,
+                            colorBlendMode: BlendMode.dstIn,
+                          ),
                         ),
                       ),
                       //Image.network(widget.detail['farm_images'][0]),
                       Positioned(
                           top: 130,
                           left: 15,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            textDirection: TextDirection.ltr,
-                            children: [
-                              Text('Farmer',
-                                style: GoogleFonts.lato(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300,
+                          child: GestureDetector(
+                            onTap: (){
+                              Navigator.push(context, CupertinoPageRoute(builder: (BuildContext)=>DetailsAdvanced(farmerDetails: widget.detail)));
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              textDirection: TextDirection.ltr,
+                              children: [
+                                Text('Farmer',
+                                  style: GoogleFonts.lato(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                  textDirection: TextDirection.ltr,
                                 ),
-                                textDirection: TextDirection.ltr,
-                              ),
-                              Text(widget.detail['name'],
-                                style: GoogleFonts.lato(
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.w500,
-                                ),),
-                            ],
+                                Text(widget.detail['name'],
+                                  style: GoogleFonts.lato(
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.w500,
+                                  ),),
+                              ],
+                            ),
                           )
                       ),
 
@@ -251,7 +265,13 @@ class _DetailsPageState extends State<DetailsPage> {
                               color: Colors.black,
                             ),),
                             const HorizontalPadding(paddingSize: 120),
-                            IconButton(onPressed: (){}, icon: const Icon(Icons.info,
+                            IconButton(onPressed: (){
+                              Navigator.push(context,
+                                CupertinoPageRoute(builder: (BuildContext context){
+                                  return DetailsAdvanced(farmerDetails: widget.detail);
+                                })
+                              );
+                            }, icon: const Icon(Icons.info,
                               color: Colors.black87,
                               size: 27,)),
                             const HorizontalPadding(paddingSize: 1),
@@ -500,3 +520,4 @@ class _RatingWidgetState extends State<RatingWidget> {
     );
   }
 }
+

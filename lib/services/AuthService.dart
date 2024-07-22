@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 class AuthService{
 
   // Google Sign in
@@ -25,3 +26,4 @@ class AuthService{
     return UserCredential;
   }
 }
+

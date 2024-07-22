@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:ffi';
 import 'dart:ui';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -28,8 +30,7 @@ Future<List<drive.File>> fetchFilesInFolder(String folderId) async {
 }
 
 class SchemesPage extends StatefulWidget {
-  SchemesPage({super.key, required this.scheme});
-  final dynamic scheme;
+  SchemesPage({super.key});
   @override
   State<SchemesPage> createState() => _SchemesPageState();
 }
@@ -37,10 +38,35 @@ class SchemesPage extends StatefulWidget {
 class _SchemesPageState extends State<SchemesPage> {
   List<drive.File> _files =[];
 
+  //reading schemes data from firebase
+  dynamic _schemes;
+  final ref = FirebaseDatabase.instance.ref();
+  late StreamSubscription _schemesStream;
+
+  void _getSchemes() async {
+
+    //active fetching
+    _schemesStream=ref.child('schemes').onValue.listen((event){
+      setState(() {
+        _schemes=event.snapshot.value;
+        print(_schemes.length);
+
+      });
+    });
+  }
+
+
   @override
   void initState(){
     super.initState();
+    _getSchemes();
     _fetchFiles();
+  }
+
+  @override
+  void deactivate(){
+    super.deactivate();
+    _schemesStream.cancel();
   }
 
   Future<void> _fetchFiles() async{
@@ -56,30 +82,41 @@ class _SchemesPageState extends State<SchemesPage> {
     }
 
   }
+  // Widget schemesLister(){
+  //   List schemeKeys= widget.scheme.keys.toList();
+  //   if(schemeKeys.length%2!=0){
+  //     schemeKeys.add('0');
+  //   }
+  //   return Column(
+  //     children: [
+  //       for(var i=0;i<schemeKeys.length;i=i+2)
+  //         schemesSingleRowLister(schemeKeys[i],schemeKeys[i+1])
+  //
+  //     ],
+  //   );
+  // }
   Widget schemesLister(){
-    List schemeKeys= widget.scheme.keys.toList();
-    if(schemeKeys.length%2!=0){
-      schemeKeys.add('0');
-    }
+    // List schemeKeys= widget.scheme.keys.toList();
+
     return Column(
       children: [
-        for(var i=0;i<schemeKeys.length;i=i+2)
-          schemesSingleRowLister(schemeKeys[i],schemeKeys[i+1])
+        for(int i=0;i<_schemes.length;i=i+2)
+          schemesSingleRowLister(i,i+1 ?? -1)
 
       ],
     );
   }
-  Widget schemesSingleRowLister(var i,var j){
+  Widget schemesSingleRowLister(int i,int j){
     return Column(
       children: [
         Row(
           children: [
             const HorizontalPadding(paddingSize: 7),
-            SchemeTopic(scheme: widget.scheme['$i']),
+            SchemeTopic(scheme: _schemes[i]),
             const Spacer(),
 
-            if(j!='0')
-              SchemeTopic(scheme: widget.scheme['$j'],),
+            if(j!='-1')
+              SchemeTopic(scheme: _schemes[j],),
             const HorizontalPadding(paddingSize: 7),
           ],
         ),
@@ -102,17 +139,8 @@ class _SchemesPageState extends State<SchemesPage> {
               mainAxisSize: MainAxisSize.max,
 
               children: [
-                  /*Row(
-                    children: [
-                      const HorizontalPadding(paddingSize: 7),
-                      SchemeTopic(scheme: widget.scheme['1']),
-                      const Spacer(),
-                      SchemeTopic(scheme: widget.scheme['2'],),
-                      HorizontalPadding(paddingSize: 7),
-                    ],
-                  ),*/
-                schemesLister(),
 
+                schemesLister() ?? Column(),
 
 
               ],

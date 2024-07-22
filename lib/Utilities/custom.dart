@@ -6,6 +6,11 @@ Color darkTeal = const Color(0xFF004D40);
 Color lightTeal= const Color(0xFF00897B);
 Color shiningTeal = const Color(0xFF1DE9B6);
 Color myWhite = Colors.white;
+
+Color myBackground = const Color(0xFFf5fff7);
+Color myGreen=  const Color(0xffe1f1e4);
+Color darkerGreen= const Color(0xFF95C19E);
+
 TextTheme MyTextTheme = TextTheme(
     bodyMedium: TextStyle(
       color: myWhite,

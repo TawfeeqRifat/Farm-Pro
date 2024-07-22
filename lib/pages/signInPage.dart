@@ -1,25 +1,108 @@
 import 'package:farm_pro/Utilities/CustomWidgets.dart';
 import 'package:farm_pro/Utilities/custom.dart';
+import 'package:farm_pro/pages/signUpPage.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
-class SignUpPage extends StatefulWidget {
-  const SignUpPage({super.key});
+import 'package:firebase_auth/firebase_auth.dart';
 
+class SignInPage extends StatefulWidget {
+  final Function()? triggerSignUp;
+  const SignInPage({super.key, required this.triggerSignUp});
+  //onTap;
   @override
-  State<SignUpPage> createState() => _SignUpPageState();
+  State<SignInPage> createState() => _SignInPageState();
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(ObjectFlagProperty<Function()?>.has('onTap', triggerSignUp));
+  }
 }
 
-class _SignUpPageState extends State<SignUpPage> {
+class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateMixin {
+  //for text
   final emailController= TextEditingController();
   final passwordController = TextEditingController();
-
-  bool isPasswordVisible=false;
+  late bool isPasswordVisible;
+  bool wrongPassword=false;
+  bool wrongMail=false;
+  //for loading circle
+  //late AnimationController _animationController;
+  //late Animation<Color?> _colorTween;
 
   @override
   void initState(){
     super.initState();
-    isPasswordVisible=false;
+
+    isPasswordVisible=false;/*
+    _animationController=AnimationController(
+      vsync: this,);
+    _colorTween= _animationController.drive(
+      ColorTween(
+        begin: Colors.green,
+        end: Colors.teal,
+      ));
+    _animationController.repeat(
+    );*/
+
+
+
+  }
+
+  void signIn()async{
+    setState(() async {
+      print(emailController.text);
+      debugPrint(passwordController.text);
+      await  FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text,
+          password: passwordController.text
+      );
+      print('signed in ${FirebaseAuth.instance.currentUser?.displayName!}');
+    });
+
+    //loading circle
+    // showDialog(context: context, builder: (context){
+    //   return Center(
+    //       child: CircularProgressIndicator(
+    //         strokeCap: StrokeCap.round,
+    //         //valueColor: _colorTween,
+    //       )
+    //   );
+    // });
+
+
+    //commence sign in
+    /*try{
+      await  FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text,
+          password: passwordController.text
+      );
+      //print(FirebaseAuth.instance.username);
+      //close loading circle
+      Navigator.pop(context);
+    } on FirebaseAuthException catch(e){
+      //close loading circle
+      Navigator.pop(context);
+      debugPrint('error');
+      //mail no found
+      if(e.code =='user-not-found'){
+        setState((){
+          wrongMail=true;
+        });
+      }
+
+      //incorrect password
+      else if(e.code=='wrong-password'){
+        setState((){
+          wrongPassword
+          =true;
+        });
+      }
+    }*/
+
   }
   @override
   Widget build(BuildContext context) {
@@ -29,11 +112,11 @@ class _SignUpPageState extends State<SignUpPage> {
       backgroundColor: myBackground,
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Padding(padding: EdgeInsets.symmetric(horizontal: 25),
+          child: Padding(padding: const EdgeInsets.symmetric(horizontal: 25),
               child: Center(
                 child: Column(
                   children: [
-                    VerticalPadding(paddingSize: 95),
+                    const VerticalPadding(paddingSize: 95),
                     Container(
                         child: Text('FarmPro',
                           style: GoogleFonts.signikaNegative(
@@ -43,19 +126,26 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                         )
                     ),
-                    VerticalPadding(paddingSize: 30),
+                    const VerticalPadding(paddingSize: 30),
           
                     //mail Id widget
-                    myTextField(
+                    MyTextField(
                       controller: emailController,
                       hintText: 'Email Id',
                       obscureText: false,
+                      errorText: 'Email Not Found!',
+                      errorCondition: wrongMail
                     ),
-                    VerticalPadding(paddingSize: 10),
+                    const VerticalPadding(paddingSize: 10),
           
                     //password widget
                     TextField(
                         //onChanged: onQueryChanged,
+                        onChanged: (String Value){
+                          setState(() {
+                            wrongPassword=false;
+                          });
+                        },
                         controller: passwordController,
                         decoration: InputDecoration(
           
@@ -68,6 +158,9 @@ class _SignUpPageState extends State<SignUpPage> {
                           errorBorder: OutlineInputBorder(
                               borderSide: BorderSide(color: Colors.redAccent.shade100)
                           ),
+                          focusedErrorBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.redAccent.shade100)
+                          ),
           
                           fillColor: Colors.green.shade50,
                           filled: true,
@@ -75,6 +168,9 @@ class _SignUpPageState extends State<SignUpPage> {
                           hintStyle: GoogleFonts.lato(
                             color: Colors.green.shade400,
                           ),
+
+                          errorText: wrongPassword?'Incorrect Password':null,
+
           
                           suffixIcon: IconButton(
                             onPressed: (){
@@ -96,7 +192,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         showCursor: true,
                     ),
           
-                    VerticalPadding(paddingSize: 4),
+                    const VerticalPadding(paddingSize: 4),
           
                     //forgot password
                     Row(
@@ -114,10 +210,11 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                       ],
                     ),
-                    VerticalPadding(paddingSize: 20),
+                    const VerticalPadding(paddingSize: 20),
           
                     //sign in button
                     GestureDetector(
+                      onTap: signIn,
                       child: Container(
                         height: 60,
                         width: double.infinity,
@@ -136,7 +233,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         )
                       ),
                     ),
-                    VerticalPadding(paddingSize: 20),
+                    const VerticalPadding(paddingSize: 20),
           
                     //-------------or-------------
                     Row(
@@ -162,7 +259,7 @@ class _SignUpPageState extends State<SignUpPage> {
           
                     //sign up
                     GestureDetector(
-                      onTap: (){},
+                      onTap: widget.triggerSignUp,
                       child: Text('Sign Up?',
                        style: GoogleFonts.lato(
                          fontSize:22,
@@ -184,23 +281,50 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 }
 
-class myTextField extends StatelessWidget {
-  const myTextField({
+class MyTextField extends StatefulWidget {
+  MyTextField({
     super.key,
     required this.hintText,
     required this.obscureText,
     required this.controller,
-    this.suffix
+    this.errorText,
+    this.errorCondition,
+    this.optionalCondition
   });
   final bool obscureText;
   final String hintText;
-  final controller;
-  final suffix;
+  final TextEditingController controller;
+  final String? errorText;
+  bool? errorCondition;
+  //made for cases when to remove other TextFields error message
+  bool? optionalCondition;
+
+
+
+  @override
+  State<MyTextField> createState() => _MyTextFieldState();
+}
+
+class _MyTextFieldState extends State<MyTextField> {
+
+  @override
+  void initState(){
+    super.initState();
+    widget.errorCondition=false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return TextField(
-        controller: controller,
-        obscureText: obscureText,
+        onChanged: (String value){
+          setState((){
+            widget.errorCondition=false;
+            widget.optionalCondition=false;
+          });
+        },
+
+        controller: widget.controller,
+        obscureText: widget.obscureText,
         decoration: InputDecoration(
           enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(color: darkerGreen)
@@ -211,13 +335,16 @@ class myTextField extends StatelessWidget {
           errorBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.redAccent.shade100)
           ),
+          focusedErrorBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.redAccent.shade100)
+          ),
           fillColor: Colors.green.shade50,
           filled: true,
-          hintText: hintText,
+          hintText: widget.hintText,
           hintStyle: GoogleFonts.lato(
             color: Colors.green.shade400,
           ),
-
+          errorText: ((widget.errorCondition!=null && widget.errorCondition==true)? widget.errorText: null)?? null,
           ),
         style: GoogleFonts.lato(
           color: Colors.green.shade700,

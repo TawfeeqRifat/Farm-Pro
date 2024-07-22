@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:ui';
-import 'package:farm_pro/pages/LoginPage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,7 +9,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:farm_pro/pages/schemesPage.dart';
 import 'package:farm_pro/pages/farmersPage.dart';
 import 'package:farm_pro/sample_details.dart';
+import 'package:googleapis/streetviewpublish/v1.dart';
 import '../Utilities/CustomWidgets.dart';
+
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.detail});
@@ -17,25 +22,47 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+
+
   int bottomIndex=0;
-  static List<Widget> pages=<Widget>[
-    FarmerPage(detail: details, userDetail: details['hitori goto'],),
-     SchemesPage(scheme: schemes),
-    Center(
-      child: Column(
-        children: [
-          const VerticalPadding(paddingSize: 100),
-          Text('Coming Soon!', textAlign: TextAlign.center,
-           style: GoogleFonts.lato(
-             fontSize: 50
-           ),)
-        ],
-      ),
-    )
-  ];
+  late List<Widget> pages;
 
   String headlineText='Explore';
   List<String> headlineList=['Explore','Schemes','Tips'];
+  final user= FirebaseAuth.instance.currentUser;
+
+
+  void signOut(){
+    debugPrint('signed out');
+    FirebaseAuth.instance.signOut();
+
+  }
+
+  @override
+ void initState(){
+    super.initState();
+    pages=<Widget>[
+      // FarmerPage(
+      //     farmerDetails: widget.detail,
+      //     userDetail: widget.detail['hitori goto']),
+      FarmerPage2(),
+      SchemesPage(),
+      Center(
+        child: Column(
+          children: [
+            const VerticalPadding(paddingSize: 100),
+            Text('Coming Soon!', textAlign: TextAlign.center,
+              style: GoogleFonts.lato(
+                  fontSize: 50
+              ),)
+          ],
+        ),
+      )
+    ];
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -80,10 +107,12 @@ class _HomePageState extends State<HomePage> {
               const VerticalPadding(paddingSize: 40),
               CircleAvatar(
                 radius: 50,
-                backgroundImage: NetworkImage('${details['hitori goto']?['profile']}'),
+                backgroundImage: NetworkImage(user?.photoURL??'https://dunked.com/assets/prod/22884/p17s2tfgc31jte13d51pea1l2oblr3.png'),
+                  //{details['hitori goto']?['profile']}
               ),
               const VerticalPadding(paddingSize: 12),
-              Text('${details['hitori goto']?['name']}',
+              Text(user?.displayName?? 'user',
+                //{details['hitori goto']?['name']
                 style: GoogleFonts.lato(
                   fontWeight: FontWeight.w600,
                   fontSize: 28,
@@ -135,11 +164,9 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
+
               const Spacer(),
-              IconButton(onPressed: (){
-                Navigator.of(context).popUntil((route) => route.isFirst);
-                Navigator.pushReplacement(context,CupertinoPageRoute(builder: (Builder)=> LoginPage()));
-              },
+              IconButton(onPressed: signOut,
                   icon: const Icon(Icons.logout_outlined,
                     size: 30,
                     color: Colors.black54,
@@ -160,44 +187,47 @@ class _HomePageState extends State<HomePage> {
         )
       ),
 
-      body: Center(
-        child: Column(
-          children: [
-            const VerticalPadding(paddingSize: 25),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Padding(padding: const EdgeInsetsDirectional.only(start: 18),
-                  child: Text(headlineText,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 20,
+      body: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        child: Center(
+          child: Column(
+            children: [
+              const VerticalPadding(paddingSize: 25),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(padding: const EdgeInsetsDirectional.only(start: 18),
+                    child: Text(headlineText,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 20,
+                      ),
                     ),
                   ),
-                ),
-                const Spacer(),
-                Padding(padding: const EdgeInsetsDirectional.only(end: 8),
-                  child: Builder(
-                    builder: (context){
-                      return IconButton(
-                          onPressed: () {
-                            Scaffold.of(context).openEndDrawer();
-                          },
-                          icon: const Icon(Icons.account_circle,
-                            size: 28,
-                          )
-                      );
-                    },
+                  const Spacer(),
+                  Padding(padding: const EdgeInsetsDirectional.only(end: 8),
+                    child: Builder(
+                      builder: (context){
+                        return IconButton(
+                            onPressed: () {
+                              Scaffold.of(context).openEndDrawer();
+                            },
+                            icon: const Icon(Icons.account_circle,
+                              size: 28,
+                            )
+                        );
+                      },
+                    )
                   )
-                )
-              ],
-            ),
-            const VerticalPadding(paddingSize: 8),
-
-            pages.elementAt(bottomIndex),
-          ],
-
-
+                ],
+              ),
+              const VerticalPadding(paddingSize: 8),
+        
+              pages.elementAt(bottomIndex),
+            ],
+        
+        
+          ),
         ),
       )
 

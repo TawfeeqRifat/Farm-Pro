@@ -3,7 +3,7 @@ import 'package:farm_pro/Utilities/custom.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'farmersPage.dart';
 
 class DetailsAdvanced extends StatefulWidget {
@@ -20,7 +20,7 @@ class _DetailsAdvancedState extends State<DetailsAdvanced> {
       backgroundColor: myBackground,
       
       appBar: AppBar(
-
+        scrolledUnderElevation: 0.0,
         backgroundColor: myBackground,
         automaticallyImplyLeading: false,
         actions: [
@@ -41,81 +41,124 @@ class _DetailsAdvancedState extends State<DetailsAdvanced> {
         width: MediaQuery.of(context).size.width,
         child: SingleChildScrollView(
           child: Padding(padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('FARMER',
-                  style: GoogleFonts.lato(
-                    fontSize: 30,
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
-                const VerticalPadding(paddingSize: 15),
-                Text(widget.farmerDetails['name'],
-                  style: GoogleFonts.lato(
-                    fontSize: 35,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                CustomDivider(
-                  color: darkTeal,
-                  thickness: 3,
-                ),
-                VerticalPadding(paddingSize: 5),
-                Row(
-                 mainAxisAlignment: MainAxisAlignment.end,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    IconButton(onPressed: ()async{
-                      String p=widget.farmerDetails['contact_details']['pno'];
-                      Uri phone=Uri.parse('tel:$p');
-                      if(await launchUrl((phone))){
-                        debugPrint("can dial");
-                      }
-                      else{
-                        debugPrint('cannot dial');
-                      }
-                    },
-                        icon: Icon(Icons.phone,
-                          color: lightTeal,
-                        )
+                    Text('FARMER',
+                      style: GoogleFonts.lato(
+                        fontSize: 30,
+                        fontWeight: FontWeight.w300,
+                      ),
                     ),
-                    HorizontalPadding(paddingSize: 5),
-                    IconButton(onPressed: ()async{
-                      String mail=widget.farmerDetails['contact_details']['mail_id'];
-                      Uri email=Uri.parse('mailto:$mail');
-                      await launchUrl(email);
-                    }, icon: Icon(Icons.mail_outline,
+                    const VerticalPadding(paddingSize: 15),
+                    Text(widget.farmerDetails['name'],
+                      style: GoogleFonts.lato(
+                        fontSize: 35,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    CustomDivider(
+                      color: darkTeal,
+                      thickness: 3,
+                    ),
+                    VerticalPadding(paddingSize: 5),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(onPressed: ()async{
+                            String p=widget.farmerDetails['contact_details']['pno'];
+                            Uri phone=Uri.parse('tel:$p');
+                            if(await launchUrl((phone))){
+                              debugPrint("can dial");
+                            }
+                            else{
+                              debugPrint('cannot dial');
+                            }
+                          },
+                              icon: Icon(Icons.phone,
                                 color: lightTeal,
                               )
+                          ),
+                          HorizontalPadding(paddingSize: 5),
+                          IconButton(onPressed: ()async{
+                            String mail=widget.farmerDetails['contact_details']['mail_id'];
+                            Uri email=Uri.parse('mailto:$mail');
+                            await launchUrl(email);
+                          }, icon: Icon(Icons.mail_outline,
+                            color: lightTeal,
+                          )
+                          ),
+                        ]
                     ),
-                  ]
+                    VerticalPadding(paddingSize: 10),
+                    Text('Domain',
+                      style: GoogleFonts.lato(
+                        fontSize: 35,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    VerticalPadding(paddingSize: 5),
+                    SizedBox(
+                      height: 40,
+                      width: double.infinity,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children:[
+                            HorizontalPadding(paddingSize: 4),
+                            for(var i in widget.farmerDetails['farm_type'])
+                              FarmTypeFloat(typeName: i,myheight: 30,myFontSize: 15,myColor: Colors.white),
+                          ],
+                        ),),
+                    ),
+                    VerticalPadding(paddingSize: 10),
+                    Text('Description',
+                      style: GoogleFonts.lato(
+                        fontSize: 35,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    VerticalPadding(paddingSize: 5),
+                    Padding(padding: EdgeInsets.only(left: 8),
+                      child: Text(widget.farmerDetails['about'],
+                        style: GoogleFonts.lato(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                    VerticalPadding(paddingSize: 30),
+                    Container(
+                      height: 300,
+                      decoration: BoxDecoration(
+                        color: myGreen,
+                      ),
+                    ),
+                    VerticalPadding(paddingSize: 5),
+                    InkWell(
+                      onTap: ()async{
+                        Uri _url=Uri.parse("https://www.google.com/maps?ll=10.728578,79.01826&z=19&t=m&hl=en&gl=US&mapclient=embed&cid=447860320795505436");
+                        if(await launchUrl(_url)){
+                          await launchUrl(_url);
+                        }
+                        else{
+
+                        }
+                      },
+                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 8),
+                        child: Text(widget.farmerDetails['address'],
+                          style: GoogleFonts.lato(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w400,
+                              color: lightTeal
+                          ),
+                        ),
+                      ),
+                    ),
+                    VerticalPadding(paddingSize: 30)
+                  ],
                 ),
-                VerticalPadding(paddingSize: 10),
-                Text('Domain',
-                  style: GoogleFonts.lato(
-                    fontSize: 35,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                SizedBox(
-                  height: 40,
-                  width: double.infinity,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children:[
-                        for(var i in widget.farmerDetails['farm_type'])
-                          FarmTypeFloat(typeName: i,myheight: 30.0,),
-                      ],
-                    ),),
-                ),
-
-
-
-
-              ],
-            ),
-          )
+              ),
         )
       )
     );

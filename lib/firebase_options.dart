@@ -26,10 +26,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -53,11 +50,24 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCh2Rw6iu9xZp9P86ba_K5QQboq2RqE5J8',
-    appId: '1:537870062984:android:4b90c952ab4eb2c144963d',
-    messagingSenderId: '537870062984',
-    projectId: 'farm-pro-85764',
-    databaseURL: 'https://farm-pro-85764-default-rtdb.firebaseio.com',
-    storageBucket: 'farm-pro-85764.appspot.com',
+    apiKey: 'AIzaSyAvw6V-WXp03tOJ0TUdkLm6eo4v549R-zU',
+    appId: '1:539505907325:android:617b1669f1382d7f0b8314',
+    messagingSenderId: '539505907325',
+    projectId: 'farm-pro-2a193',
+    databaseURL: 'https://farm-pro-2a193-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'farm-pro-2a193.appspot.com',
   );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyBFGP13UvzXUV1N_1Em2zfXj0WPzyDyOtQ',
+    appId: '1:539505907325:ios:a55de118a4238cd50b8314',
+    messagingSenderId: '539505907325',
+    projectId: 'farm-pro-2a193',
+    databaseURL: 'https://farm-pro-2a193-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'farm-pro-2a193.appspot.com',
+    androidClientId: '539505907325-aq6s0lkcbu40kq0crvpcc77botl6jh9f.apps.googleusercontent.com',
+    iosClientId: '539505907325-ts3560g96m00dtmdovbi1o3iel0shb4d.apps.googleusercontent.com',
+    iosBundleId: 'com.example.farmPro',
+  );
+
 }
