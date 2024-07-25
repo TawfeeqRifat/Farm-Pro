@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ffi';
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +50,6 @@ class _SchemesPageState extends State<SchemesPage> {
     _schemesStream=ref.child('schemes').onValue.listen((event){
       setState(() {
         _schemes=event.snapshot.value;
-        print(_schemes.length);
 
       });
     });
@@ -101,12 +101,12 @@ class _SchemesPageState extends State<SchemesPage> {
     return Column(
       children: [
         for(int i=0;i<_schemes.length;i=i+2)
-          schemesSingleRowLister(i,i+1 ?? -1)
+          schemesSingleRowLister(i,i+1,_schemes.length)
 
       ],
     );
   }
-  Widget schemesSingleRowLister(int i,int j){
+  Widget schemesSingleRowLister(int i,int j,int len){
     return Column(
       children: [
         Row(
@@ -115,8 +115,8 @@ class _SchemesPageState extends State<SchemesPage> {
             SchemeTopic(scheme: _schemes[i]),
             const Spacer(),
 
-            if(j!='-1')
-              SchemeTopic(scheme: _schemes[j],),
+            if(j!=len)
+              SchemeTopic(scheme: _schemes[j]),
             const HorizontalPadding(paddingSize: 7),
           ],
         ),
@@ -176,9 +176,37 @@ class SchemeTopic extends StatelessWidget {
                 ),
                 child:  ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                      scheme['image']!,
-                      fit: BoxFit.cover,
+                    // child: Image.network(
+                    //   scheme['image']!,
+                    //   fit: BoxFit.cover,
+                    // ),
+                    child: CachedNetworkImage(
+                      imageUrl: scheme['image']!,
+                      imageBuilder: (context,imageProvider){
+                        return Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        );
+
+                      },
+                      errorWidget: (context,url,error)=>const  Icon(Icons.hourglass_disabled_sharp,size: 35,),
+                      placeholder: (context,url){
+                        return const SizedBox(
+                          height: 10,
+                          width: 10,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.black,
+                              strokeAlign: BorderSide.strokeAlignCenter,
+                              strokeWidth: BorderSide.strokeAlignOutside,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   )
               ),

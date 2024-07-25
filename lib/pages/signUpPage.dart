@@ -1,6 +1,7 @@
 import 'package:farm_pro/Utilities/CustomWidgets.dart';
 import 'package:farm_pro/Utilities/custom.dart';
 import 'package:farm_pro/pages/signInPage.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,6 +17,10 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  //linking the firebase for writing user initial data
+  final database = FirebaseDatabase.instance.ref();
+  late final _detailsRef;
+
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final doublePasswordController = TextEditingController();
@@ -34,6 +39,8 @@ class _SignUpPageState extends State<SignUpPage> {
           email: emailController.text,
           password: passwordController.text,
       );
+
+
       debugPrint("working here!");
     } on FirebaseAuthException catch(e){
 
@@ -66,6 +73,25 @@ class _SignUpPageState extends State<SignUpPage> {
             });
       };
     }
+
+    // final user= FirebaseAuth.instance.currentUser;
+    // await _detailsRef.set({
+    //   emailController.text : {
+    //     "name" : user?.displayName?? "user",
+    //     "farmer?" : false,
+    //     "id" : emailController.text,
+    //     "rated" : {
+    //       null: 0
+    //     },
+    //     "rating" : {
+    //       "noOfRating" : 0,
+    //       "rate" : 0
+    //     },
+    //     "mailId" : emailController.text,
+    //     "profile" : user?.photoURL??'https://dunked.com/assets/prod/22884/p17s2tfgc31jte13d51pea1l2oblr3.png'
+    //   }
+    // }).catchErroe((error)=>print("error: $error"));
+
   }
   @override
   void initState() {
@@ -74,9 +100,14 @@ class _SignUpPageState extends State<SignUpPage> {
     _passwordDontMatch = false;
     _mailAlreadyExists = false;
     _weakPassword=false;
+
+    //firebase database for writing
+    _detailsRef = database.child('details');
   }
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
 
         resizeToAvoidBottomInset: false,

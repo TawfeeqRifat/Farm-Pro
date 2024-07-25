@@ -448,6 +448,7 @@ class _FarmerPage2State extends State<FarmerPage2> {
 
   dynamic _firebaseDetails;
   final ref = FirebaseDatabase.instance.ref();
+
   late StreamSubscription _detailsStream;
   void _getDetails() async {
 
@@ -512,6 +513,8 @@ class _FarmerPage2State extends State<FarmerPage2> {
   @override
   void initState(){
     super.initState();
+
+
     _getDetails();
   }
 

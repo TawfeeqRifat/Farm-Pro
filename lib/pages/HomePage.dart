@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
+import 'package:farm_pro/Utilities/custom.dart';
+import 'package:farm_pro/pages/SignUpForm.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,6 +11,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:farm_pro/pages/schemesPage.dart';
 import 'package:farm_pro/pages/farmersPage.dart';
 import 'package:farm_pro/sample_details.dart';
+import 'package:googleapis/apigeeregistry/v1.dart';
 import 'package:googleapis/streetviewpublish/v1.dart';
 import '../Utilities/CustomWidgets.dart';
 
@@ -32,6 +35,84 @@ class _HomePageState extends State<HomePage> {
   List<String> headlineList=['Explore','Schemes','Tips'];
   final user= FirebaseAuth.instance.currentUser;
 
+  //get started for new users
+  Future<bool> _checkUserExists() async {
+    dynamic firebaseDetails;
+    final ref = FirebaseDatabase.instance.ref();
+    firebaseDetails = await ref.child('details').get();
+    firebaseDetails = firebaseDetails.value;
+    List<dynamic> users = firebaseDetails.keys.toList();
+    List<dynamic> userEmails = [];
+    for(var i in users) {
+      userEmails.add(firebaseDetails[i]['official_mail']);
+    }
+    return userEmails.contains(user?.email);
+  }
+
+  Future<void> _createAccountPopUp() async {
+    if(await _checkUserExists()==false){
+      return showDialog
+        (context: context,
+          builder: (BuildContext context){
+            return Center(
+              child: Container(
+                height: 300,
+                width: 300,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: myBackground
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                        'Finish Signing Up?',
+                        style: GoogleFonts.lato(
+                          fontSize: 40,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.center,
+                    ),
+
+                    const VerticalPadding(paddingSize: 20),
+
+                    GestureDetector(
+                      onTap: (){
+                        Navigator.pop(context);
+                        Navigator.push(context, CupertinoPageRoute(
+                            builder: (context)=> SignUpForm()));
+
+                      },
+                      child: Container(
+                        height: 50,
+                        width: 200,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: darkerGreen
+                        ),
+                        child: Text(
+                          'Continue',
+                          style: GoogleFonts.lato(
+                            fontWeight: FontWeight.w700,
+                            color: myBackground,
+                            fontSize: 30,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+
+
+                  ],
+                ),
+              ),
+            );
+          });
+    }
+    
+  }
+
 
   void signOut(){
     debugPrint('signed out');
@@ -42,6 +123,9 @@ class _HomePageState extends State<HomePage> {
   @override
  void initState(){
     super.initState();
+
+    FirebaseDatabase.instance.setPersistenceEnabled(true);
+
     pages=<Widget>[
       // FarmerPage(
       //     farmerDetails: widget.detail,
@@ -60,6 +144,8 @@ class _HomePageState extends State<HomePage> {
         ),
       )
     ];
+
+    _createAccountPopUp();
 
   }
 
@@ -192,6 +278,7 @@ class _HomePageState extends State<HomePage> {
         child: Center(
           child: Column(
             children: [
+
               const VerticalPadding(paddingSize: 25),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
