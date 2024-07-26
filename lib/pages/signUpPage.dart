@@ -90,7 +90,7 @@ class _SignUpPageState extends State<SignUpPage> {
     //     "mailId" : emailController.text,
     //     "profile" : user?.photoURL??'https://dunked.com/assets/prod/22884/p17s2tfgc31jte13d51pea1l2oblr3.png'
     //   }
-    // }).catchErroe((error)=>print("error: $error"));
+    // }).catchError((error)=>print("error: $error"));
 
   }
   @override

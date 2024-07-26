@@ -27,6 +27,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
 
+  late String username;
 
   int bottomIndex=0;
   late List<Widget> pages;
@@ -38,7 +39,7 @@ class _HomePageState extends State<HomePage> {
   //get started for new users
   Future<bool> _checkUserExists() async {
     dynamic firebaseDetails;
-    final ref = FirebaseDatabase.instance.ref();
+      final ref = FirebaseDatabase.instance.ref();
     firebaseDetails = await ref.child('details').get();
     firebaseDetails = firebaseDetails.value;
     List<dynamic> users = firebaseDetails.keys.toList();
@@ -81,7 +82,7 @@ class _HomePageState extends State<HomePage> {
                       onTap: (){
                         Navigator.pop(context);
                         Navigator.push(context, CupertinoPageRoute(
-                            builder: (context)=> SignUpForm()));
+                            builder: (context)=> SignUpForm(user: user,)));
 
                       },
                       child: Container(
@@ -110,6 +111,7 @@ class _HomePageState extends State<HomePage> {
             );
           });
     }
+
     
   }
 
