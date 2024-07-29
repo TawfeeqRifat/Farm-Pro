@@ -1,4 +1,5 @@
 import 'package:farm_pro/firebase_options.dart';
+import 'package:farm_pro/pages/HomePage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -25,7 +26,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-
+      initialRoute: '/',
+      routes: {
+        '/homepage' : (context) => HomePage(),
+      },
       theme: ThemeData(
         fontFamily: GoogleFonts.lato().fontFamily,
           //colorScheme: ColorScheme.fromSeed(seedColor: darkTeal),
@@ -34,7 +38,7 @@ class MyApp extends StatelessWidget {
         /*cupertinoOverrideTheme: CupertinoThemeData(
           primaryColor: Colors.green,
         ),*/
-        textSelectionTheme: TextSelectionThemeData(
+        textSelectionTheme: const TextSelectionThemeData(
           selectionHandleColor: Colors.teal,
         )
       ),

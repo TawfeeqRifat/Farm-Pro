@@ -74,24 +74,6 @@ class _SignUpPageState extends State<SignUpPage> {
       };
     }
 
-    // final user= FirebaseAuth.instance.currentUser;
-    // await _detailsRef.set({
-    //   emailController.text : {
-    //     "name" : user?.displayName?? "user",
-    //     "farmer?" : false,
-    //     "id" : emailController.text,
-    //     "rated" : {
-    //       null: 0
-    //     },
-    //     "rating" : {
-    //       "noOfRating" : 0,
-    //       "rate" : 0
-    //     },
-    //     "mailId" : emailController.text,
-    //     "profile" : user?.photoURL??'https://dunked.com/assets/prod/22884/p17s2tfgc31jte13d51pea1l2oblr3.png'
-    //   }
-    // }).catchError((error)=>print("error: $error"));
-
   }
   @override
   void initState() {

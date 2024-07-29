@@ -46,7 +46,7 @@ class _AuthPageState extends State<AuthPage> {
           builder: (context,snapshot){
             //user is logged in
             if(snapshot.hasData){
-                return HomePage(detail: details);
+                return HomePage();
                // return example(detail: detail);
             }
             else{

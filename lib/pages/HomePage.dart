@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 import 'package:farm_pro/Utilities/custom.dart';
+import 'package:farm_pro/global_variable.dart';
 import 'package:farm_pro/pages/SignUpForm.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -10,16 +11,12 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:farm_pro/pages/schemesPage.dart';
 import 'package:farm_pro/pages/farmersPage.dart';
-import 'package:farm_pro/sample_details.dart';
-import 'package:googleapis/apigeeregistry/v1.dart';
-import 'package:googleapis/streetviewpublish/v1.dart';
 import '../Utilities/CustomWidgets.dart';
 
 
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.detail});
-  final dynamic detail;
+  const HomePage({super.key});
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -36,18 +33,24 @@ class _HomePageState extends State<HomePage> {
   List<String> headlineList=['Explore','Schemes','Tips'];
   final user= FirebaseAuth.instance.currentUser;
 
+  dynamic firebaseDetails;
+  final ref = FirebaseDatabase.instance.ref();
   //get started for new users
   Future<bool> _checkUserExists() async {
-    dynamic firebaseDetails;
-      final ref = FirebaseDatabase.instance.ref();
     firebaseDetails = await ref.child('details').get();
     firebaseDetails = firebaseDetails.value;
     List<dynamic> users = firebaseDetails.keys.toList();
     List<dynamic> userEmails = [];
     for(var i in users) {
       userEmails.add(firebaseDetails[i]['official_mail']);
+      if(firebaseDetails[i]['official_mail']==user?.email){
+        userId= i;
+        return true;
+      }
     }
-    return userEmails.contains(user?.email);
+    return false;
+    // return userEmails.contains(user?.email);
+
   }
 
   Future<void> _createAccountPopUp() async {
@@ -66,14 +69,16 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                        'Finish Signing Up?',
-                        style: GoogleFonts.lato(
-                          fontSize: 40,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        textAlign: TextAlign.center,
+                    Center(
+                      child: Text(
+                          'Finish Setting Up?',
+                          style: GoogleFonts.lato(
+                            fontSize: 40,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          textAlign: TextAlign.center,
+                      ),
                     ),
 
                     const VerticalPadding(paddingSize: 20),
@@ -82,7 +87,7 @@ class _HomePageState extends State<HomePage> {
                       onTap: (){
                         Navigator.pop(context);
                         Navigator.push(context, CupertinoPageRoute(
-                            builder: (context)=> SignUpForm(user: user,)));
+                            builder: (context)=> SignUpForm()));
 
                       },
                       child: Container(
@@ -117,7 +122,7 @@ class _HomePageState extends State<HomePage> {
 
 
   void signOut(){
-    debugPrint('signed out');
+   debugPrint('signed out');
     FirebaseAuth.instance.signOut();
 
   }
@@ -195,12 +200,17 @@ class _HomePageState extends State<HomePage> {
               const VerticalPadding(paddingSize: 40),
               CircleAvatar(
                 radius: 50,
-                backgroundImage: NetworkImage(user?.photoURL??'https://dunked.com/assets/prod/22884/p17s2tfgc31jte13d51pea1l2oblr3.png'),
-                  //{details['hitori goto']?['profile']}
+                backgroundImage: NetworkImage(
+                    // (userId!=null)? firebaseDetails[userId]['profile'] :
+                    user?.photoURL ?? 'https://static.vecteezy.com/system/resources/thumbnails/036/280/651/small/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg'),
+                backgroundColor: myGreen,
+                foregroundColor: myGreen,
+
               ),
               const VerticalPadding(paddingSize: 12),
-              Text(user?.displayName?? 'user',
-                //{details['hitori goto']?['name']
+              Text(
+                (userId!=null)? firebaseDetails[userId]['name']:
+                    user?.displayName?? 'User',
                 style: GoogleFonts.lato(
                   fontWeight: FontWeight.w600,
                   fontSize: 28,
@@ -208,7 +218,14 @@ class _HomePageState extends State<HomePage> {
               ),
               const VerticalPadding(paddingSize: 20),
               GestureDetector(
-                onTap: (){},
+                onTap: ()  {
+                  if(_createAccountPopUp()==false){
+                    print('doesnt');
+                  }
+                  else{
+                    print("accoutn exist'");
+                  }
+                },
                 child: Padding(padding: const EdgeInsets.symmetric(horizontal: 5),
                   child: Container(
                     height: 65,

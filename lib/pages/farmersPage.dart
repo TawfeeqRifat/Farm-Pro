@@ -451,7 +451,6 @@ class _FarmerPage2State extends State<FarmerPage2> {
 
   late StreamSubscription _detailsStream;
   void _getDetails() async {
-
     //active fetching
     _detailsStream=ref.child('details').onValue.listen((event){
       final Object? descritpion=event.snapshot.value;
@@ -541,6 +540,7 @@ class _FarmerPage2State extends State<FarmerPage2> {
               child: Container(
                 height: 60,
                 child: TextField(
+
                   onChanged: onQueryChanged,
                   controller: searchController,
                   style: GoogleFonts.lato(),
@@ -597,6 +597,7 @@ class _FarmerPage2State extends State<FarmerPage2> {
 
                   ),
                   textAlign: TextAlign.left,
+                  cursorColor: Colors.teal,
                 ),
               )),
           const VerticalPadding(paddingSize: 6),
