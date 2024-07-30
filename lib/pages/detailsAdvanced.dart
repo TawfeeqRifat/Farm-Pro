@@ -79,7 +79,7 @@ class _DetailsAdvancedState extends State<DetailsAdvanced> {
                                 color: lightTeal,
                               )
                           ),
-                          HorizontalPadding(paddingSize: 5),
+                          const HorizontalPadding(paddingSize: 5),
                           IconButton(onPressed: ()async{
                             String mail=widget.farmerDetails['contact_details']['mail_id'];
                             Uri email=Uri.parse('mailto:$mail');
@@ -90,14 +90,14 @@ class _DetailsAdvancedState extends State<DetailsAdvanced> {
                           ),
                         ]
                     ),
-                    VerticalPadding(paddingSize: 10),
+                    const VerticalPadding(paddingSize: 10),
                     Text('Domain',
                       style: GoogleFonts.lato(
                         fontSize: 35,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    VerticalPadding(paddingSize: 5),
+                    const VerticalPadding(paddingSize: 5),
                     SizedBox(
                       height: 40,
                       width: double.infinity,
@@ -105,13 +105,13 @@ class _DetailsAdvancedState extends State<DetailsAdvanced> {
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children:[
-                            HorizontalPadding(paddingSize: 4),
+                            const HorizontalPadding(paddingSize: 4),
                             for(var i in widget.farmerDetails['farm_type'])
                               FarmTypeFloat(typeName: i,myheight: 30,myFontSize: 15,myColor: Colors.white),
                           ],
                         ),),
                     ),
-                    VerticalPadding(paddingSize: 10),
+                    const VerticalPadding(paddingSize: 10),
                     Text('Description',
                       style: GoogleFonts.lato(
                         fontSize: 35,

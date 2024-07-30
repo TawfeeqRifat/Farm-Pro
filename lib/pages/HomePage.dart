@@ -44,7 +44,10 @@ class _HomePageState extends State<HomePage> {
     for(var i in users) {
       userEmails.add(firebaseDetails[i]['official_mail']);
       if(firebaseDetails[i]['official_mail']==user?.email){
-        userId= i;
+        setState(() {
+          userId= i;
+          userProfile= firebaseDetails[userId]['profile'];
+        });
         return true;
       }
     }
@@ -202,6 +205,7 @@ class _HomePageState extends State<HomePage> {
                 radius: 50,
                 backgroundImage: NetworkImage(
                     // (userId!=null)? firebaseDetails[userId]['profile'] :
+                    userProfile ??
                     user?.photoURL ?? 'https://static.vecteezy.com/system/resources/thumbnails/036/280/651/small/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg'),
                 backgroundColor: myGreen,
                 foregroundColor: myGreen,

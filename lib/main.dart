@@ -1,5 +1,6 @@
 import 'package:farm_pro/firebase_options.dart';
 import 'package:farm_pro/pages/HomePage.dart';
+import 'package:farm_pro/pages/SignUpForm.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/homepage' : (context) => HomePage(),
+        '/signUpForm' : (context) => SignUpForm(),
       },
       theme: ThemeData(
         fontFamily: GoogleFonts.lato().fontFamily,

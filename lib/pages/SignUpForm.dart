@@ -1,16 +1,21 @@
 
 import 'dart:async';
+import 'dart:io';
+import 'dart:ui';
 
 import 'package:farm_pro/Utilities/CustomWidgets.dart';
+import 'package:farm_pro/pages/HomePage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:googleapis/transcoder/v1.dart';
-
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import '../Utilities/custom.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:crop_image/crop_image.dart';
 
 class SignUpForm extends StatefulWidget {
   const SignUpForm({super.key});
@@ -22,6 +27,262 @@ class _SignUpFormState extends State<SignUpForm> {
 
   final nameController = TextEditingController();
   final idController = TextEditingController();
+
+
+  //Image cropping
+  var croppedImage;
+  final imageController= CropController(
+    aspectRatio: 1,
+    defaultCrop: Rect.fromLTRB(0.1, 0.1, 0.9, 0.9)
+  );
+  void Cropper(){
+    showDialog(context: context, builder: (BuildContext){
+      return Center(
+        child: Container(
+          height: double.infinity,
+          width: double.infinity,
+          color: Colors.black,
+          child: Stack(
+            children: [
+              Center(
+                child: Container(
+                  height: double.infinity,
+                  width: double.infinity,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 150),
+                    child: CropImage(
+                      controller: imageController,
+                      image: Image.asset(_selectedFilePath!),
+                    ),
+                  ),
+                ),
+              ),
+
+              Positioned(
+                child: Column(
+                  children: [
+                    Spacer(),
+                    Row(
+                      children: [
+
+                        Padding(
+                          padding: const EdgeInsets.only(left: 15.0),
+                          child: GestureDetector(
+                            onTap: (){
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+                            },
+                              child: DefaultTextStyle(
+                                style: GoogleFonts.lato(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white54,
+                                ),
+                                child: Text('Cancel'),
+                              )
+                          ),
+                        ),
+                        Spacer(),
+
+                        //rotate
+                        IconButton(
+                            onPressed: imageController.rotateLeft,
+                            icon: Icon(Icons.rotate_90_degrees_ccw,color: Colors.white54,size: 25,)
+                        ),
+                        Spacer(),
+
+                        //done
+                        Padding(
+                          padding: const EdgeInsets.only(right: 15.0),
+                          child: GestureDetector(
+                              onTap: () async {
+                                Image croppedImage=await imageController.croppedImage();
+                                // var bitmap = await imageController.croppedBitmap();
+                                // var data = await bitmap.toByteData(format: ImageByteFormat.png);
+                                // var bytes=data!.buffer.asUint8List();
+                                // file.writeAsBytes(bytes,flush);
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pop();
+                              },
+                              child: DefaultTextStyle(
+                                style: GoogleFonts.lato(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white54,
+                                ),
+                                child: Text('Done '),
+                              )
+                          ),
+                        ),
+                      ],
+                    ),
+                    VerticalPadding(paddingSize: 20),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      );
+    });
+  }
+  //Imagepicker for image
+  String? _selectedFilePath;
+  XFile? profile;
+
+  void _pickProfile()async{
+    showCupertinoModalBottomSheet(
+      expand: false,
+      
+      context: context,
+      builder: (context) => Container(
+        height: 250,
+        // width: ,
+        decoration: BoxDecoration(
+          // borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(padding: EdgeInsets.symmetric(vertical: 10,horizontal: 150),
+              child: CustomDivider(color: Colors.green,thickness: 5,)
+            ),
+            Padding(padding: EdgeInsets.symmetric(vertical: 20,horizontal: 20),
+              child: Row(
+                children: [
+                  DefaultTextStyle(
+                      style: GoogleFonts.lato(
+                          color: Colors.green,
+                          fontSize: 30,
+                          fontWeight: FontWeight.w700
+                      ),
+                      child: Text('Profile Photo')
+                  ),
+                  Spacer(),
+                  IconButton(
+                      onPressed: (){
+                        setState(() {
+                          _selectedFilePath=null;
+                        });
+                        Navigator.of(context).pop();
+                      },
+                      icon: Icon(CupertinoIcons.trash,color: Colors.green,))
+                ],
+              )
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 10.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+
+                  //camera
+                  GestureDetector(
+                    onTap: getFromCamera,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Column(
+                        children: [
+                          CircleAvatar(backgroundColor: myGreen,foregroundColor: myGreen,radius: 30,child: Icon(CupertinoIcons.camera,color: Colors.green, size: 40,)),
+                          VerticalPadding(paddingSize: 5),
+                          DefaultTextStyle(
+                              style: GoogleFonts.lato(
+                                  color: Colors.green,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700
+                              ),
+                              child: Text('Camera')
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  //gallery
+                  GestureDetector(
+                    onTap: getFromGallery,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 40.0),
+                      child: Column(
+                        children: [
+                          CircleAvatar(backgroundColor: myGreen,foregroundColor: myGreen,radius: 30,child: Icon(Icons.photo_camera_back,color: Colors.green, size: 40,)),
+                          VerticalPadding(paddingSize: 5),
+                          DefaultTextStyle(
+                              style: GoogleFonts.lato(
+                                  color: Colors.green,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700
+                              ),
+                              child: Text('Gallery')
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                ],
+              ),
+            )
+          ],
+        ),
+
+      ),
+    );
+
+
+  }
+
+  //get from gallery
+  Future<void> getFromGallery() async {
+    profile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    setState(() {
+      _selectedFilePath=profile?.path ?? _selectedFilePath;
+    });
+    // Navigator.of(context).pop();
+    Cropper();
+  }
+
+  //get from camera
+  Future<void> getFromCamera() async {
+    profile = await ImagePicker().pickImage(source: ImageSource.camera);
+    setState(() {
+      _selectedFilePath=profile?.path ?? _selectedFilePath;
+    });
+    Navigator.of(context).pop();
+  }
+
+  //image showing widget
+  Widget showProfile(){
+    if(_selectedFilePath!=null){
+      return
+          Container(
+            height: 95,
+            width: 95,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(55),
+              // child: Image.file(
+              //   File(_selectedFilePath!),
+              //   fit: BoxFit.cover,
+              // ),
+              child: croppedImage,
+            ),
+          );
+    }
+    else{
+      return Icon(CupertinoIcons.person_crop_circle,size: 110, color: darkerGreen,);
+    }
+  }
+
+  //setting up cloud storage for profile
+  final _storage = FirebaseStorage.instance;
+  var profilesRef;
+
+  Future<void> _uploadProfile() async {
+    Reference ref = _storage.ref().child("UserData/");
+    // UploadTask uploadTask = ref.putFile(_selectedFilePath);
+    // Uri location =
+  }
+
 
   //get user details from google
   final user= FirebaseAuth.instance.currentUser;
@@ -102,6 +363,9 @@ class _SignUpFormState extends State<SignUpForm> {
     }
     else{
       bool success=true;
+      print("working here");
+      await _uploadProfile();
+      print("working here!!");
       await _detailsRef.update({
         idController.text : {
           "name" : nameController.text,
@@ -117,7 +381,7 @@ class _SignUpFormState extends State<SignUpForm> {
           },
           "profile" : user?.photoURL??'https://dunked.com/assets/prod/22884/p17s2tfgc31jte13d51pea1l2oblr3.png'
         }
-      }).catchError((error){print("error: $error");success=false;});
+      }).catchError((error){ print("error: $error");success=false;} );
       if(success){
         return showDialog
           (context: context,
@@ -134,14 +398,14 @@ class _SignUpFormState extends State<SignUpForm> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       DefaultTextStyle(
-                        child: Text(
-                          'Your Account \nhas been set!',
-                          textAlign: TextAlign.center,
-                        ),
                         style: GoogleFonts.lato(
                           fontSize: 38,
                           color: Colors.black,
                           fontWeight: FontWeight.w500,
+                        ),
+                        child: const Text(
+                          'Your Account \nhas been set!',
+                          textAlign: TextAlign.center,
                         ),
                       ),
 
@@ -149,7 +413,9 @@ class _SignUpFormState extends State<SignUpForm> {
 
                       GestureDetector(
                         onTap: (){
-                          Navigator.popAndPushNamed(context, '/homepage');
+                          // Navigator.popAndPushNamed(context, '/homepage');
+                          Navigator.popUntil(context, ModalRoute.withName('/homepage'));
+                          Navigator.push(context, CupertinoPageRoute(builder:(context) => HomePage(),));
                         },
                         child: Container(
                           height: 50,
@@ -160,14 +426,14 @@ class _SignUpFormState extends State<SignUpForm> {
                           ),
                           child: Center(
                             child: DefaultTextStyle(
-                              child: Text(
-                                'Continue',
-                                textAlign: TextAlign.center,
-                              ),
                               style: GoogleFonts.lato(
                                 fontWeight: FontWeight.w700,
                                 color: myBackground,
                                 fontSize: 30,
+                              ),
+                              child: const Text(
+                                'Continue',
+                                textAlign: TextAlign.center,
                               ),
                             ),
                           ),
@@ -192,7 +458,7 @@ class _SignUpFormState extends State<SignUpForm> {
     //connect firebase for write
     _detailsRef = FirebaseDatabase.instance.ref('details');
 
-    //connect firebase for contant read
+    //connect firebase for constant read
     _getDetails();
 
   }
@@ -207,12 +473,12 @@ class _SignUpFormState extends State<SignUpForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
 
           children: [
-            VerticalPadding(paddingSize: 40),
+            const VerticalPadding(paddingSize: 40),
 
             //title
             Text(
@@ -223,26 +489,40 @@ class _SignUpFormState extends State<SignUpForm> {
                   color: Colors.green,
                 ),
             ),
-            VerticalPadding(paddingSize: 40),
+            const VerticalPadding(paddingSize: 40),
 
             //profile
             GestureDetector(
               onTap: (){
-
+                  _pickProfile();
               },
               child: Stack(
                 alignment: Alignment.center,
-
-                fit: StackFit.passthrough,
                 children: [
-                  Positioned(left: 24,child: CircleAvatar(backgroundColor: myGreen,radius: 45,)),
-                  Icon(CupertinoIcons.person_crop_circle_badge_plus,size: 90, color: darkerGreen,),
-                  SizedBox(width: 120,)
+                  const SizedBox(width: 140,),
+                  Positioned(child: CircleAvatar(backgroundColor: myGreen,radius: 55,)),
+                  showProfile(),
+                  Positioned(
+                    bottom: 3,
+                    right: 0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: myGreen
+                      ),
+                      child: Icon(
+                        CupertinoIcons.camera_circle_fill,
+                        color: darkerGreen,
+                        size: 50,
+                      ),
+                    ),
+                  ),
+
                 ],
-              ),
+              )
             ),
 
-            VerticalPadding(paddingSize: 25),
+            const VerticalPadding(paddingSize: 25),
 
             //name
             // CustomTextBox(controller: nameController,Title: 'Name',errorText: "Name can't be empty and less than 4 characters!",errorCondition: nameError,helperText: '*Name should have at least 4 characters', hintText: user?.email,),
@@ -370,7 +650,7 @@ class _SignUpFormState extends State<SignUpForm> {
 
 
             // Spacer(),
-            VerticalPadding(paddingSize: 45),
+            const VerticalPadding(paddingSize: 45),
             //Submit button
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),

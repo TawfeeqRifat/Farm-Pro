@@ -53,6 +53,11 @@ dependencies:
   flutter_rating_bar: ^4.0.1
   google_maps_flutter: ^2.2.8
   firebase_database: ^10.5.7
+  file_picker: ^8.0.6
+  firebase_storage: ^11.7.7
+  image_picker: ^1.1.2
+  modal_bottom_sheet: ^3.0.0
+  crop_image: ^1.0.13
 
 
 
