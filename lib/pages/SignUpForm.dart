@@ -9,13 +9,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import '../Utilities/custom.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:crop_image/crop_image.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 class SignUpForm extends StatefulWidget {
   const SignUpForm({super.key});
@@ -52,7 +53,7 @@ class _SignUpFormState extends State<SignUpForm> {
                     padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 150),
                     child: CropImage(
                       controller: imageController,
-                      image: Image.asset(_selectedFilePath!),
+                      image: Image.file(File(_selectedFilePath!)),
                     ),
                   ),
                 ),
@@ -96,13 +97,20 @@ class _SignUpFormState extends State<SignUpForm> {
                           padding: const EdgeInsets.only(right: 15.0),
                           child: GestureDetector(
                               onTap: () async {
-                                Image croppedImage=await imageController.croppedImage();
-                                // var bitmap = await imageController.croppedBitmap();
-                                // var data = await bitmap.toByteData(format: ImageByteFormat.png);
-                                // var bytes=data!.buffer.asUint8List();
-                                // file.writeAsBytes(bytes,flush);
+                                final img= await imageController.croppedImage();
+
+                                //storing in local storage to get path
+                                var bitmap = await imageController.croppedBitmap();
+                                var data=await bitmap.toByteData(format: ImageByteFormat.png);
+                                var bytes = data!.buffer.asUint8List();
+                                await File(_selectedFilePath!).writeAsBytes(bytes);
+
+                                setState(() {
+                                  croppedImage= img;
+                                });
                                 Navigator.of(context).pop();
                                 Navigator.of(context).pop();
+
                               },
                               child: DefaultTextStyle(
                                 style: GoogleFonts.lato(
@@ -126,6 +134,7 @@ class _SignUpFormState extends State<SignUpForm> {
       );
     });
   }
+
   //Imagepicker for image
   String? _selectedFilePath;
   XFile? profile;
@@ -178,7 +187,9 @@ class _SignUpFormState extends State<SignUpForm> {
 
                   //camera
                   GestureDetector(
-                    onTap: getFromCamera,
+                    onTap: (){
+                      getImage(2);
+                    },
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8.0),
                       child: Column(
@@ -200,7 +211,9 @@ class _SignUpFormState extends State<SignUpForm> {
 
                   //gallery
                   GestureDetector(
-                    onTap: getFromGallery,
+                    onTap: (){
+                      getImage(1);
+                    },
                     child: Padding(
                       padding: const EdgeInsets.only(left: 40.0),
                       child: Column(
@@ -232,23 +245,39 @@ class _SignUpFormState extends State<SignUpForm> {
 
   }
 
-  //get from gallery
-  Future<void> getFromGallery() async {
-    profile = await ImagePicker().pickImage(source: ImageSource.gallery);
-    setState(() {
-      _selectedFilePath=profile?.path ?? _selectedFilePath;
-    });
-    // Navigator.of(context).pop();
-    Cropper();
-  }
 
-  //get from camera
-  Future<void> getFromCamera() async {
-    profile = await ImagePicker().pickImage(source: ImageSource.camera);
-    setState(() {
-      _selectedFilePath=profile?.path ?? _selectedFilePath;
-    });
-    Navigator.of(context).pop();
+  Future<void> getImage(int i) async {
+    final profile;
+
+    //galley
+    if(i==1){
+      profile = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if(profile!=null) {
+        setState(() {
+          _selectedFilePath = profile?.path ?? _selectedFilePath;
+        });
+        Cropper();
+      }
+      else{
+        //if user cancel, permission denied
+        Navigator.of(context).pop();
+      }
+    }
+
+    //camera
+    else if(i==2){
+      profile = await ImagePicker().pickImage(source: ImageSource.camera);
+      if(profile!=null) {
+        setState(() {
+          _selectedFilePath = profile?.path ?? _selectedFilePath;
+        });
+        Cropper();
+      }
+      else{
+        //if user cancel, permission denied
+        Navigator.of(context).pop();
+      }
+    }
   }
 
   //image showing widget
@@ -276,16 +305,34 @@ class _SignUpFormState extends State<SignUpForm> {
   //setting up cloud storage for profile
   final _storage = FirebaseStorage.instance;
   var profilesRef;
+  late UploadTask uploadTask;
+  String? urlDownload;
 
   Future<void> _uploadProfile() async {
-    Reference ref = _storage.ref().child("UserData/");
-    // UploadTask uploadTask = ref.putFile(_selectedFilePath);
-    // Uri location =
+
+    //creating ref to the storage
+    final path='UserData/profile/${idController.text}';
+    var ref=FirebaseStorage.instance.ref().child(path);
+
+    //removing previous
+    try {
+      await ref.delete();
+    }on FirebaseException catch (e) {
+      print('Profile doesn\'t already exist');
+    }
+    //check if image has been given
+    if(_selectedFilePath!=null){
+      final file= File(_selectedFilePath!);
+      uploadTask = ref.putFile(file);
+      final snapshot= await uploadTask!.whenComplete((){});
+      urlDownload=await snapshot.ref.getDownloadURL();
+    }
   }
 
 
   //get user details from google
   final user= FirebaseAuth.instance.currentUser;
+
   //get firebase link to write
   late final _detailsRef;
 
@@ -363,9 +410,7 @@ class _SignUpFormState extends State<SignUpForm> {
     }
     else{
       bool success=true;
-      print("working here");
       await _uploadProfile();
-      print("working here!!");
       await _detailsRef.update({
         idController.text : {
           "name" : nameController.text,
@@ -379,7 +424,7 @@ class _SignUpFormState extends State<SignUpForm> {
             "noOfRating" : 0,
             "rate" : 0
           },
-          "profile" : user?.photoURL??'https://dunked.com/assets/prod/22884/p17s2tfgc31jte13d51pea1l2oblr3.png'
+          "profile" : urlDownload ?? user?.photoURL ?? null
         }
       }).catchError((error){ print("error: $error");success=false;} );
       if(success){
@@ -517,7 +562,6 @@ class _SignUpFormState extends State<SignUpForm> {
                       ),
                     ),
                   ),
-
                 ],
               )
             ),
