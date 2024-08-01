@@ -1,9 +1,9 @@
-import 'package:farm_pro/Utilities/CustomWidgets.dart';
-import 'package:farm_pro/Utilities/custom.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+import 'package:farm_pro/Utilities/CustomWidgets.dart';
+import 'package:farm_pro/Utilities/custom.dart';
 import 'farmersPage.dart';
 
 class DetailsAdvanced extends StatefulWidget {

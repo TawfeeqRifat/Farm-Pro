@@ -1,13 +1,12 @@
 import 'dart:ui';
 
-import 'package:farm_pro/pages/HomePage.dart';
-import 'package:farm_pro/pages/signInPage.dart';
-import 'package:farm_pro/pages/signUpPage.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:farm_pro/sample_details.dart';
-import 'package:farm_pro/pages/LoginPage.dart';
+
+import 'package:farm_pro/Pages/Authentication_pages/signInPage.dart';
+import 'package:farm_pro/Pages/Authentication_pages/signUpPage.dart';
+import 'package:farm_pro/pages/HomePage.dart';
+
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
@@ -17,20 +16,6 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
-  // dynamic detail;
-  // final ref = FirebaseDatabase.instance.ref();
-  // void _getDetails() async {
-  //   final snapshot = await ref.child('details').get();
-  //   if (snapshot.exists) {
-  //     detail=snapshot.value;
-  //     List<Object?> names = detail.keys.toList();
-  //     print(names);
-  //
-  //   } else {
-  //     print('No data available.');
-  //   }
-  //   print("works end");
-  // }
 
   void initState(){
     super.initState();

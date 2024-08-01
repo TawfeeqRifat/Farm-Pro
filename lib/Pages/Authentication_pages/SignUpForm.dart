@@ -3,8 +3,6 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:farm_pro/Utilities/CustomWidgets.dart';
-import 'package:farm_pro/pages/HomePage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,10 +11,12 @@ import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
-import '../Utilities/custom.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:crop_image/crop_image.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+
+import 'package:farm_pro/Utilities/custom.dart';
+import 'package:farm_pro/Utilities/CustomWidgets.dart';
+import 'package:farm_pro/pages/HomePage.dart';
 
 class SignUpForm extends StatefulWidget {
   const SignUpForm({super.key});

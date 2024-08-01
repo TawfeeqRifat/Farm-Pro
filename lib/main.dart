@@ -1,12 +1,13 @@
 import 'package:farm_pro/firebase_options.dart';
 import 'package:farm_pro/pages/HomePage.dart';
-import 'package:farm_pro/pages/SignUpForm.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:farm_pro/pages/AuthPage.dart';
 import 'package:firebase_database/firebase_database.dart';
+
+import 'Pages/Authentication_pages/AuthPage.dart';
+import 'Pages/Authentication_pages/SignUpForm.dart';
 
 
 void main() async {

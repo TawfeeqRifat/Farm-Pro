@@ -5,7 +5,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:crop_image/crop_image.dart';
 import 'package:farm_pro/Utilities/custom.dart';
 import 'package:farm_pro/global_variable.dart';
-import 'package:farm_pro/pages/SignUpForm.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -14,11 +13,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:farm_pro/pages/schemesPage.dart';
-import 'package:farm_pro/pages/farmersPage.dart';
+import 'package:farm_pro/pages/Schemes_pages/schemesPage.dart';
+import 'package:farm_pro/pages/Farmers_pages/farmersPage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import '../Utilities/CustomWidgets.dart';
+import 'Authentication_pages/SignUpForm.dart';
 
 
 

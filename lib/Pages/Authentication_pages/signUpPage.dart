@@ -1,13 +1,12 @@
-import 'package:farm_pro/Utilities/CustomWidgets.dart';
 import 'package:farm_pro/Utilities/custom.dart';
-import 'package:farm_pro/pages/signInPage.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../sample_details.dart';
+import 'package:farm_pro/Utilities/CustomWidgets.dart';
+
 class SignUpPage extends StatefulWidget {
   final Function()? triggerSignIn;
   const SignUpPage({super.key,required this.triggerSignIn});

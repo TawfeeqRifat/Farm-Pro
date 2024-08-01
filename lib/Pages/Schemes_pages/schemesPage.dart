@@ -1,18 +1,16 @@
 import 'dart:async';
-import 'dart:ffi';
 import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_gradient/image_gradient.dart';
-
-import 'package:farm_pro/Utilities/CustomWidgets.dart';
-import 'package:farm_pro/pages/schemeAdvanced.dart';
-
 import 'package:http/http.dart' as http;
 import 'package:googleapis/drive/v3.dart' as drive;
+
+import 'package:farm_pro/Utilities/CustomWidgets.dart';
+import 'package:farm_pro/Pages/Schemes_pages/schemeAdvanced.dart';
+
 
 
 final _client = http.Client();

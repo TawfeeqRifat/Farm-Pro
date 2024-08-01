@@ -1,9 +1,8 @@
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:farm_pro/Pages/Farmers_pages/detailsAdvanced.dart';
 import 'package:farm_pro/Utilities/CustomWidgets.dart';
-import 'package:farm_pro/pages/detailsAdvanced.dart';
-import 'package:farm_pro/pages/details_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -11,6 +10,7 @@ import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+
 
 
 class DetailsPage extends StatefulWidget {

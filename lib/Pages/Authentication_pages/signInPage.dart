@@ -1,7 +1,5 @@
 import 'package:farm_pro/Utilities/CustomWidgets.dart';
 import 'package:farm_pro/Utilities/custom.dart';
-import 'package:farm_pro/pages/signUpPage.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -54,13 +52,10 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
 
   void signIn()async{
     setState(() async {
-      print(emailController.text);
-      debugPrint(passwordController.text);
       await  FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text,
           password: passwordController.text
       );
-      print('signed in ${FirebaseAuth.instance.currentUser?.displayName!}');
     });
 
     //loading circle
