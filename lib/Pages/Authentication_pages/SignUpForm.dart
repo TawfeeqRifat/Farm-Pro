@@ -349,7 +349,6 @@ class _SignUpFormState extends State<SignUpForm> {
       setState(() {
         _firebaseDetails=event.snapshot.value;
         _allIds=_firebaseDetails.keys.toList();
-        print(_allIds);
       });
     });
   }
@@ -741,7 +740,8 @@ class CustomTextBox extends StatefulWidget {
       this.optionalCondition,
       required this.Title,
       this.text,
-      this.helperText
+      this.helperText,
+      this.multiline,
   });
   final String? hintText;
   final String Title;
@@ -750,6 +750,7 @@ class CustomTextBox extends StatefulWidget {
   final String? text;
   final String? helperText;
   bool? errorCondition;
+  bool? multiline;
   //made for cases when to remove other TextFields error message
   bool? optionalCondition;
 
@@ -794,7 +795,8 @@ class _CustomTextBox extends State<CustomTextBox> {
             },
 
             controller: widget.controller,
-
+            keyboardType: (widget.multiline!=null && widget.multiline==true)? TextInputType.multiline: null,
+            maxLines: (widget.multiline!=null && widget.multiline==true)? null: 1,
             decoration: InputDecoration(
               enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: darkerGreen)

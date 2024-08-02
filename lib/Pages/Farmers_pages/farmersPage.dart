@@ -288,19 +288,19 @@ class _FarmerPage2State extends State<FarmerPage2> {
 
   final searchController = TextEditingController();
 
-  String query='';
+  String? query;
   List<dynamic> searchResults=[];
   late List<dynamic> _allUsers;
 
-  void onQueryChanged(String query){
+  void onQueryChanged(String? query){
     setState(() {
       if(query==''){
-        searchResults= _firebaseDetails.keys.toList();
+        searchResults= _allUsers.where((e)=>_firebaseDetails[e]['farmer?']==true).toList();
       }
       else{
         searchResults.clear();
         for (var i in _firebaseDetails.keys) {
-          if (i.toLowerCase().contains(query.toLowerCase()) && _firebaseDetails[i]['farmer?']) {
+          if (i.toLowerCase().contains(query?.toLowerCase()) && _firebaseDetails[i]['farmer?']) {
             searchResults.add(i);
           }
         }
@@ -308,12 +308,6 @@ class _FarmerPage2State extends State<FarmerPage2> {
     });
   }
 
-  void textClearance(){
-    setState(() {
-
-
-    });
-  }
   Widget displayFarmPageCards(){
     return Column(
         children:[
@@ -399,7 +393,7 @@ class _FarmerPage2State extends State<FarmerPage2> {
                           onPressed: () {
                             setState(() {
                               searchController.text='';
-                              searchResults= _firebaseDetails.keys.toList();
+                              searchResults= _allUsers.where((e)=>_firebaseDetails[e]['farmer?']==true).toList();
                               FocusScope.of(context).unfocus();
 
                             });

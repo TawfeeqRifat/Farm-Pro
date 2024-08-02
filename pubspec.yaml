@@ -59,6 +59,7 @@ dependencies:
   modal_bottom_sheet: ^3.0.0
   crop_image: ^1.0.13
   image_gallery_saver: ^2.0.3
+  dotted_border: ^2.1.0
 
 
 
