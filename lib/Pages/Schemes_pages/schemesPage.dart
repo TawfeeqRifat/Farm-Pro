@@ -12,21 +12,21 @@ import 'package:farm_pro/Utilities/CustomWidgets.dart';
 import 'package:farm_pro/Pages/Schemes_pages/schemeAdvanced.dart';
 
 
-
-final _client = http.Client();
-
-Future<List<drive.File>> fetchFilesInFolder(String folderId) async {
-  final driveApi = drive.DriveApi(_client);
-  final files = <drive.File>[];
-
-  try {
-    final response = await driveApi.files.list(q: "'$folderId' in parents");
-    files.addAll(response.files!);
-    return files;
-  } finally {
-    _client.close();
-  }
-}
+//
+// final _client = http.Client();
+//
+// Future<List<drive.File>> fetchFilesInFolder(String folderId) async {
+//   final driveApi = drive.DriveApi(_client);
+//   final files = <drive.File>[];
+//
+//   try {
+//     final response = await driveApi.files.list(q: "'$folderId' in parents");
+//     files.addAll(response.files!);
+//     return files;
+//   } finally {
+//     _client.close();
+//   }
+// }
 
 class SchemesPage extends StatefulWidget {
   SchemesPage({super.key});
@@ -35,10 +35,10 @@ class SchemesPage extends StatefulWidget {
 }
 
 class _SchemesPageState extends State<SchemesPage> {
-  List<drive.File> _files =[];
+  // List<drive.File> _files =[];
 
   //reading schemes data from firebase
-  dynamic _schemes;
+  dynamic _schemes={};
   final ref = FirebaseDatabase.instance.ref();
   late StreamSubscription _schemesStream;
 
@@ -58,7 +58,7 @@ class _SchemesPageState extends State<SchemesPage> {
   void initState(){
     super.initState();
     _getSchemes();
-    _fetchFiles();
+    // _fetchFiles();
   }
 
   @override
@@ -67,19 +67,19 @@ class _SchemesPageState extends State<SchemesPage> {
     _schemesStream.cancel();
   }
 
-  Future<void> _fetchFiles() async{
-    try {
-      final folderId = 'https://drive.google.com/drive/folders/1KvTdUw21neNZACCbB4DShrqKi-L5LoPZ?usp=drive_link';
-      final files = await fetchFilesInFolder(folderId);
-      setState(() {
-        _files = files;
-        print(_files.length);
-      });
-    } catch(error){
-      print ('Error fetching files: $error');
-    }
-
-  }
+  // Future<void> _fetchFiles() async{
+  //   try {
+  //     final folderId = 'https://drive.google.com/drive/folders/1KvTdUw21neNZACCbB4DShrqKi-L5LoPZ?usp=drive_link';
+  //     // final files = await fetchFilesInFolder(folderId);
+  //     // setState(() {
+  //     //   _files = files;
+  //     //   print(_files.length);
+  //     // });
+  //   } catch(error){
+  //     print ('Error fetching files: $error');
+  //   }
+  //
+  // }
   // Widget schemesLister(){
   //   List schemeKeys= widget.scheme.keys.toList();
   //   if(schemeKeys.length%2!=0){
@@ -94,6 +94,7 @@ class _SchemesPageState extends State<SchemesPage> {
   //   );
   // }
   Widget schemesLister(){
+
     // List schemeKeys= widget.scheme.keys.toList();
 
     return Column(
@@ -129,7 +130,6 @@ class _SchemesPageState extends State<SchemesPage> {
       children: [
         const VerticalPadding(paddingSize: 15,),
         SizedBox(
-          height: 664.7271,
           width: double.infinity,
           child: SingleChildScrollView(
             child: Column(

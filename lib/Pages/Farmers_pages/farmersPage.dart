@@ -10,6 +10,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:farm_pro/Pages/Farmers_pages/detailsPage.dart';
 import 'package:farm_pro/Utilities/CustomWidgets.dart';
 
+import '../../global_variable.dart';
+
 class FarmerPageCard extends StatefulWidget {
   const FarmerPageCard({super.key, required this.detail, required this.userDetail});
   final dynamic detail;
@@ -19,6 +21,7 @@ class FarmerPageCard extends StatefulWidget {
 }
 
 class _FarmerPageCardState extends State<FarmerPageCard> {
+
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +64,7 @@ class _FarmerPageCardState extends State<FarmerPageCard> {
                                   child: ClipRRect(
                                       borderRadius: BorderRadius.circular(8),
                                       child: CachedNetworkImage(
-                                        imageUrl: widget.detail['profile'],
+                                        imageUrl: widget.detail['profile'] ?? placeholderprofileLink,
                                         imageBuilder: (context,imageProvider){
                                           return Container(
                                             decoration: BoxDecoration(
@@ -93,7 +96,7 @@ class _FarmerPageCardState extends State<FarmerPageCard> {
                           child: ClipRRect(
                               borderRadius: BorderRadius.circular(8),
                               child: CachedNetworkImage(
-                                imageUrl: widget.detail['profile'],
+                                imageUrl: widget.detail['profile'] ?? placeholderprofileLink,
                                 imageBuilder: (context,imageProvider){
                                   return Container(
                                     decoration: BoxDecoration(

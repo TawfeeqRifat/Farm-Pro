@@ -60,6 +60,7 @@ dependencies:
   crop_image: ^1.0.13
   image_gallery_saver: ^2.0.3
   dotted_border: ^2.1.0
+  loading_animation_widget: ^1.2.1
 
 
 

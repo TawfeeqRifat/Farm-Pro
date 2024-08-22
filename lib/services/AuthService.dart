@@ -23,7 +23,7 @@ class AuthService{
 
     print(userCredential.user?.displayName);
 
-    return UserCredential;
+    return userCredential;
   }
 }
 

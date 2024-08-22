@@ -1,6 +1,7 @@
 import 'package:farm_pro/Pages/Authentication_pages/SignUpForm.dart';
 import 'package:farm_pro/Pages/Profile_pages/Shop_page.dart';
 import 'package:farm_pro/Utilities/CustomWidgets.dart';
+import 'package:farm_pro/customFunction.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -87,6 +88,10 @@ class _FarmerformState extends State<Farmerform> {
       });
     }
     else{
+
+      //load Animation
+      loadAnimation(context);
+
       bool success=true;
       String error;
       List DomainVals=[];
@@ -103,71 +108,16 @@ class _FarmerformState extends State<Farmerform> {
           "about" : DescripionController.text,
           "address" : AddressController1.text + "\n" + AddressController2.text + "\n" + AddressController3.text,
           "farm_type" : DomainVals
-      }).catchError((e){ error=e; success=false;});
+      }
+      ).catchError((e){
+        error=e;
+        success=false;
+        PopUp(context,'$e', 30, Colors.redAccent, FontWeight.w400, "Continue");
+      });
       if(success==true){
         Navigator.pop(context);
+        Navigator.pop(context);
         Navigator.push(context, CupertinoPageRoute(builder: (BuildContext)=> ShopPage()));
-      }
-      else{
-        return showDialog
-          (context: context,
-            builder: (BuildContext context){
-              return Center(
-                child: Container(
-                  height: 300,
-                  width: 300,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: myBackground
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      DefaultTextStyle(
-                        style: GoogleFonts.lato(
-                          fontSize: 38,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        child: const Text(
-                          'Some Problem\nCheck Network or Try again Later',
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-
-                      const VerticalPadding(paddingSize: 20),
-
-                      GestureDetector(
-                        onTap: (){
-                          Navigator.pop(context);
-                        },
-                        child: Container(
-                          height: 50,
-                          width: 200,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: darkerGreen
-                          ),
-                          child: Center(
-                            child: DefaultTextStyle(
-                              style: GoogleFonts.lato(
-                                fontWeight: FontWeight.w700,
-                                color: myBackground,
-                                fontSize: 30,
-                              ),
-                              child: const Text(
-                                'Continue',
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            });
       }
     }
   }

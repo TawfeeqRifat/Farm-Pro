@@ -6,6 +6,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:farm_pro/Utilities/CustomWidgets.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+
+import '../../customFunction.dart';
 
 class SignUpPage extends StatefulWidget {
   final Function()? triggerSignIn;
@@ -29,51 +32,89 @@ class _SignUpPageState extends State<SignUpPage> {
   late bool _mailAlreadyExists;
   late bool _weakPassword;
 
+  bool mailError=false;
+  bool passwordError=false;
+  bool confirmPasswordError=false;
+
+
+  //error messages
+  String _mailErrorMessage="";
+  String _passwordErrorMessage="";
+  String _confirmPasswordErrorMessage="";
+
   //sign up function
   void signUp()async {
     //commence create Email
     debugPrint("working here!");
-    try{
-      final credential=await FirebaseAuth.instance.createUserWithEmailAndPassword(
+
+    if(emailController.text.isEmpty){
+      setState(() {
+        _mailErrorMessage="Email Id can't be empty!";
+        mailError=true;
+      });
+    }
+    else if(passwordController.text.isEmpty){
+      setState(() {
+        _passwordErrorMessage="Password can't be empty";
+        passwordError=true;
+      });
+    }
+    else if(doublePasswordController.text.isEmpty){
+      setState(() {
+        _confirmPasswordErrorMessage="Password Can't be Empty!";
+        confirmPasswordError=true;
+      });
+    }
+    else if (doublePasswordController.text != passwordController.text) {
+      setState(() {
+        _confirmPasswordErrorMessage="Passwords Don\'t Match!";
+        confirmPasswordError=true;
+      });
+    }
+    else{
+
+      //loading widget
+      loadAnimation(context);
+
+      try{
+        final credential=await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text,
           password: passwordController.text,
-      );
+        );
 
+        //close loading
+        Navigator.pop(context);
 
-      debugPrint("working here!");
-    } on FirebaseAuthException catch(e){
+        debugPrint("working here!");
+      } on FirebaseAuthException catch(e){
 
-      //weak password
-      if(e.code == 'weak-password'){
-        setState(() {
-          _weakPassword=true;
-        });
-      }
+        //close loading
+        Navigator.pop(context);
 
-      //email taken already
-      else if(e.code=='email-already-taken-in-use'){
-        _mailAlreadyExists=true;
-      }
-
-      else(e){
-        showDialog(context: context,
-            builder: (BuildContext){
-              return Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Center(
-                      child: Text(e,style: GoogleFonts.lato(fontWeight: FontWeight.w500)),
-                    ),
-                    TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text('OK'))
-                  ],
-                ),
-              );
+        //error handling
+        switch(e.code){
+          case 'weak-password':
+            setState(() {
+              _passwordErrorMessage="Weak Password";
+              passwordError=true;
             });
-      };
-    }
+            break;
+          case 'email-already-in-use':
+            setState(() {
+              _mailErrorMessage="E-Mail already in Use!";
+              mailError=true;
+            });
+            break;
+          default:
+            ThrowError(e.code);
+        }
+      }
 
+    }
   }
+   void ThrowError(e){
+     PopUp(context, "$e!", 30, Colors.redAccent, FontWeight.w400,"Okay");
+   }
   @override
   void initState() {
     super.initState();
@@ -116,7 +157,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       TextField(
                         onChanged: (String value){
                           setState(() {
-                            _mailAlreadyExists=false;
+                           mailError=false;
                           });
                         },
                         controller: emailController,
@@ -140,7 +181,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           hintStyle: GoogleFonts.lato(
                             color: Colors.green.shade400,
                           ),
-                          errorText: _mailAlreadyExists? 'Mail Already Taken!': null,
+                          errorText: mailError? _mailErrorMessage: null,
                         ),
                         style: GoogleFonts.lato(
                           color: Colors.green.shade700,
@@ -156,8 +197,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
                         onChanged: (String value){
                           setState((){
-                            _passwordDontMatch=false;
-                            _weakPassword=false;
+                            passwordError=false;
                           });
                         },
 
@@ -182,7 +222,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           hintStyle: GoogleFonts.lato(
                             color: Colors.green.shade400,
                           ),
-                          errorText: _weakPassword?'Weak Password': null,
+                          errorText: passwordError? _passwordErrorMessage: null,
                         ),
                         style: GoogleFonts.lato(
                           color: Colors.green.shade700,
@@ -194,18 +234,16 @@ class _SignUpPageState extends State<SignUpPage> {
                       const VerticalPadding(paddingSize: 10),
 
 
-                      //password widget
+                      //confirm password widget
                       TextField(
                         onChanged: (String value) {
                           setState(() {
-                            _passwordDontMatch = false;
+                            confirmPasswordError=false;
                           });
                         },
                         controller: passwordController,
                         decoration: InputDecoration(
-                          errorText: _passwordDontMatch
-                              ? 'Passwords Don\'t Match!'
-                              : null,
+                          errorText: confirmPasswordError? _confirmPasswordErrorMessage: null,
                           enabledBorder: OutlineInputBorder(
                               borderSide: BorderSide(color: darkerGreen)
                           ),
@@ -223,7 +261,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
                           fillColor: Colors.green.shade50,
                           filled: true,
-                          hintText: 'Password',
+                          hintText: 'Confirm Password',
                           hintStyle: GoogleFonts.lato(
                             color: Colors.green.shade400,
                           ),
@@ -252,43 +290,10 @@ class _SignUpPageState extends State<SignUpPage> {
                       const VerticalPadding(paddingSize: 25),
 
 
-                      //sign in button
+                      //sign up button
                       GestureDetector(
-                        onTap: () async{
-                            print('clicking');
-                            if (doublePasswordController.text != passwordController.text) {
-                              setState(() {
-                                _passwordDontMatch = true;
-                              });
-                            }
-                            else{
-                              try{
-                                await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                                    email: emailController.text,
-                                    password: passwordController.text
-                                ).then((userCredential)=>{
-                                  debugPrint('logged in')
-
-                                });
-                              }
-                              on FirebaseAuthException catch(e) {
-                                print(e);
-                              }
-                            }
-                           /* Iterable<String> allUsers = details.keys;
-                            List<String> allMails = [];
-                            for (var i in allUsers) {
-                              dynamic nowUser = details[i]?['contact_details'];
-                              if (nowUser != null &&
-                                  nowUser.containsKey('mail_id')) {
-                                allMails.add(nowUser['mail_id']);
-                              }
-                            }
-                            if (allMails.contains(emailController.text)) {
-                              _mailAlreadyExists = true;
-                            }*/
-
-
+                        onTap: () {
+                          signUp();
                         },
                         child: Container(
                             height: 60,

@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+
+import '../../customFunction.dart';
 
 class SignInPage extends StatefulWidget {
   final Function()? triggerSignUp;
@@ -27,76 +30,77 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
   late bool isPasswordVisible;
   bool wrongPassword=false;
   bool wrongMail=false;
-  //for loading circle
-  //late AnimationController _animationController;
-  //late Animation<Color?> _colorTween;
 
+  String errorMessage="";
   @override
   void initState(){
     super.initState();
 
-    isPasswordVisible=false;/*
-    _animationController=AnimationController(
-      vsync: this,);
-    _colorTween= _animationController.drive(
-      ColorTween(
-        begin: Colors.green,
-        end: Colors.teal,
-      ));
-    _animationController.repeat(
-    );*/
-
-
+    isPasswordVisible=false;
 
   }
 
   void signIn()async{
+
+    if(emailController.text.isEmpty){
+
+      setState(() {
+        errorMessage="Mail can't be empty!";
+        wrongMail=true;
+      });
+      return;
+    }
+    else if(passwordController.text.isEmpty){
+      setState(() {
+        errorMessage="Password can't be empty!";
+        wrongMail=false;
+        wrongPassword=true;
+      });
+      return;
+    }
+
+    // loading circle
+    loadAnimation(context);
+
     setState(() async {
-      await  FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: emailController.text,
-          password: passwordController.text
-      );
+      try {
+
+        //logging in
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: emailController.text,
+            password: passwordController.text
+        );
+
+        //close loading screen
+        Navigator.pop(context);
+
+      } on FirebaseAuthException catch(e){
+        print(e.code);
+
+        //close loading screen
+        Navigator.pop(context);
+
+        //exceptions
+
+        //wrong pass/e-mail
+        if(e.code=='invalid-credential'){
+          setState((){
+              errorMessage="Email/Password Wrong";
+              wrongMail=true;
+              wrongPassword =true;
+          });
+        }
+
+        //too many attempts
+        else if(e.code=="too-many-requests"){
+          PopUp(
+            context, "Too Many Attempts! \nTry Again Later.", 30, Colors.redAccent,FontWeight.w400,"Okay");
+        }
+
+      }
+
     });
 
-    //loading circle
-    // showDialog(context: context, builder: (context){
-    //   return Center(
-    //       child: CircularProgressIndicator(
-    //         strokeCap: StrokeCap.round,
-    //         //valueColor: _colorTween,
-    //       )
-    //   );
-    // });
-
-
-    //commence sign in
-    /*try{
-      await  FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: emailController.text,
-          password: passwordController.text
-      );
-      //print(FirebaseAuth.instance.username);
-      //close loading circle
-      Navigator.pop(context);
-    } on FirebaseAuthException catch(e){
-      //close loading circle
-      Navigator.pop(context);
-      debugPrint('error');
-      //mail no found
-      if(e.code =='user-not-found'){
-        setState((){
-          wrongMail=true;
-        });
-      }
-
-      //incorrect password
-      else if(e.code=='wrong-password'){
-        setState((){
-          wrongPassword
-          =true;
-        });
-      }
-    }*/
 
   }
   @override
@@ -128,7 +132,7 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
                       controller: emailController,
                       hintText: 'Email Id',
                       obscureText: false,
-                      errorText: 'Email Not Found!',
+                      errorText: errorMessage,
                       errorCondition: wrongMail
                     ),
                     const VerticalPadding(paddingSize: 10),
@@ -164,8 +168,8 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
                             color: Colors.green.shade400,
                           ),
 
-                          errorText: wrongPassword?'Incorrect Password':null,
-
+                          // errorText: wrongPassword? 'Incorrect Password': null,
+                          errorText: wrongPassword? errorMessage: null,
           
                           suffixIcon: IconButton(
                             onPressed: (){

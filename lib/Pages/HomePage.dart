@@ -6,6 +6,7 @@ import 'package:crop_image/crop_image.dart';
 import 'package:farm_pro/Pages/Authentication_pages/FarmerForm.dart';
 import 'package:farm_pro/Pages/Profile_pages/Account_page.dart';
 import 'package:farm_pro/Pages/Profile_pages/Shop_page.dart';
+import 'package:farm_pro/Pages/SocialPage.dart';
 import 'package:farm_pro/Utilities/custom.dart';
 import 'package:farm_pro/global_variable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -21,6 +22,7 @@ import 'package:farm_pro/pages/Farmers_pages/farmersPage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import '../Utilities/CustomWidgets.dart';
+import '../customFunction.dart';
 import 'Authentication_pages/SignUpForm.dart';
 
 class HomePage extends StatefulWidget {
@@ -36,7 +38,7 @@ class _HomePageState extends State<HomePage> {
   late List<Widget> pages;
 
   String headlineText = 'Explore';
-  List<String> headlineList = ['Explore', 'Schemes', 'Tips'];
+  List<String> headlineList = ['Explore', 'Schemes', 'Social'];
   final user = FirebaseAuth.instance.currentUser;
 
   dynamic firebaseDetails;
@@ -208,14 +210,27 @@ class _HomePageState extends State<HomePage> {
                             borderRadius: BorderRadius.circular(5),
                             color: darkerGreen
                         ),
-                        child: Text(
-                          'Continue',
-                          style: GoogleFonts.lato(
-                            fontWeight: FontWeight.w700,
-                            color: myBackground,
-                            fontSize: 30,
+                        // child: Text(
+                        //   'Continue',
+                        //   style: GoogleFonts.lato(
+                        //     fontWeight: FontWeight.w700,
+                        //     color: myBackground,
+                        //     fontSize: 30,
+                        //   ),
+                        //   textAlign: TextAlign.center,
+                        // ),
+                        child: Center(
+                          child: DefaultTextStyle(
+                            style: GoogleFonts.lato(
+                              fontWeight: FontWeight.w700,
+                              color: myBackground,
+                              fontSize: 30
+                            ),
+                            child: Text(
+                                'Continue',
+                              textAlign: TextAlign.center,
+                            ),
                           ),
-                          textAlign: TextAlign.center,
                         ),
                       ),
                     ),
@@ -229,8 +244,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   void signOut() {
+    //loading animation
+
+    loadAnimation(context);
     debugPrint('signed out');
     FirebaseAuth.instance.signOut();
+
+    //close loading
+    Navigator.pop(context);
   }
 
   Widget showProfile() {
@@ -338,6 +359,10 @@ class _HomePageState extends State<HomePage> {
                               padding: const EdgeInsets.only(right: 15.0),
                               child: GestureDetector(
                                   onTap: () async {
+
+
+
+
                                     final img =
                                         await imageController.croppedImage();
 
@@ -353,9 +378,15 @@ class _HomePageState extends State<HomePage> {
                                     setState(() {
                                       croppedImage = img;
                                     });
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pop();
+                                    
+                                    //loading animation
+                                    loadAnimation(context);
+
                                     _uploadProfile();
-                                    Navigator.of(context).pop();
-                                    Navigator.of(context).pop();
+
+
                                   },
                                   child: DefaultTextStyle(
                                     style: GoogleFonts.lato(
@@ -411,6 +442,10 @@ class _HomePageState extends State<HomePage> {
                     const Spacer(),
                     IconButton(
                         onPressed: () async {
+
+                          //loading animation
+                          loadAnimation(context);
+
                           setState(() {
                             _selectedFilePath = null;
                             userProfile = null;
@@ -571,6 +606,9 @@ class _HomePageState extends State<HomePage> {
         userProfile = null;
       });
     }
+
+    // close loading
+    Navigator.of(context).pop();
   }
 
   @override
@@ -582,18 +620,7 @@ class _HomePageState extends State<HomePage> {
     pages = <Widget>[
       const FarmerPage2(),
       SchemesPage(),
-      Center(
-        child: Column(
-          children: [
-            const VerticalPadding(paddingSize: 100),
-            Text(
-              'Coming Soon!',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.lato(fontSize: 50),
-            )
-          ],
-        ),
-      )
+      SocialPage(),
     ];
 
     _checkUserExists(false);
@@ -634,9 +661,9 @@ class _HomePageState extends State<HomePage> {
                 label: 'Schemes'),
             NavigationDestination(
                 selectedIcon:
-                    Icon(Icons.handshake_outlined, color: Colors.white),
-                icon: Icon(Icons.lightbulb_outlined),
-                label: 'Tips')
+                    Icon(Icons.people_alt_rounded, color: Colors.white),
+                icon: Icon(Icons.people_alt_rounded),
+                label: 'Social')
           ],
           elevation: 15,
         ),

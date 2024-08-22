@@ -11,6 +11,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
+import '../../global_variable.dart';
+
 
 
 class DetailsPage extends StatefulWidget {
@@ -22,6 +24,7 @@ class DetailsPage extends StatefulWidget {
 }
 
 class _DetailsPageState extends State<DetailsPage> {
+
 
   @override
   Widget build(BuildContext context) {
@@ -112,6 +115,8 @@ class _DetailsPageState extends State<DetailsPage> {
                           left: 5,
                           child: Row(
                             children: [
+
+                              //phone
                               IconButton(onPressed: ()async{
                                 String p=widget.detail['contact_details']['pno'];
                                 Uri phone=Uri.parse('tel:$p');
@@ -122,12 +127,16 @@ class _DetailsPageState extends State<DetailsPage> {
                                   debugPrint('cannot dial');
                                 }
                               }, icon: Icon(Icons.phone)),
+
+                              //mail
                               IconButton(onPressed: ()async{
                                 String mail=widget.detail['contact_details']['mail_id'];
                                 Uri email=Uri.parse('mailto:$mail');
                                 await launchUrl(email);
                               }, icon: Icon(Icons.mail_outline)),
                               const HorizontalPadding(paddingSize: 4),
+
+                              //rating
                               const Icon(Icons.star,
                                 color: Colors.white70,
                               ),
@@ -191,7 +200,7 @@ class _DetailsPageState extends State<DetailsPage> {
                                     child: ClipRRect(
                                         borderRadius: BorderRadius.circular(8),
                                         child: CachedNetworkImage(
-                                          imageUrl: widget.detail['profile'],
+                                          imageUrl: widget.detail['profile'] ?? placeholderprofileLink,
                                           imageBuilder: (context,imageProvider){
                                             return Container(
                                               decoration: BoxDecoration(
@@ -224,7 +233,7 @@ class _DetailsPageState extends State<DetailsPage> {
                             height: 100,
                             width: 100,
                             child: CachedNetworkImage(
-                              imageUrl: widget.detail['profile'],
+                              imageUrl: widget.detail['profile'] ?? placeholderprofileLink,
                               imageBuilder: (context,imageProvider){
                                 return Container(
                                   decoration: BoxDecoration(
@@ -283,15 +292,18 @@ class _DetailsPageState extends State<DetailsPage> {
                   )
               ),
               const VerticalPadding(paddingSize: 10),
-              SizedBox(
-                height: 552,
+              Expanded(
+                // height: 552,
                 child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      //Container(),
-                      for(var i in items)
-                        i,
-                    ],
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                    child: Column(
+                      children: [
+                        //Container(),
+                        for(var i in items)
+                          i,
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -314,11 +326,51 @@ class AgrItemCard extends StatefulWidget {
 class _AgrItemCardState extends State<AgrItemCard> {
   @override
   Widget build(BuildContext context) {
-    String status=(widget.itemStatus==1)?'Available':(widget.itemStatus==2)?'Coming Soon':'Out of Stock';
+    String status=(widget.itemStatus==1)?"Available":(widget.itemStatus==2)?"Coming\nSoon":"Out of\nStock";
     Color statusColour=(widget.itemStatus==1)?Colors.green:(widget.itemStatus==2)?Colors.grey:Colors.white;
     Color cardColor= (widget.itemStatus==1 || widget.itemStatus==2)?Color(0xffe1f1e4):Color(0xffa7a7a7);
     Color imageColor=(widget.itemStatus==1 || widget.itemStatus==2)?Colors.white:Color(0xffa7a7a7);
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 18,vertical: 10),
+
+    void viewItem(imageLink){
+      showDialog(context: context,
+          barrierDismissible: false,
+          builder: (Builder){
+            return InteractiveViewer(
+              constrained: true,
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: CachedNetworkImage(
+                    imageUrl: imageLink,
+                    imageBuilder: (context,imageProvider){
+                      return Container(
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: imageProvider,
+                          ),
+                        ),
+                      );
+                    },
+                    errorWidget: (context,url,error)=>const  Icon(CupertinoIcons.cart,size: 60,),
+                    placeholder: (context,url){
+                      return const SizedBox(
+                        height: 10,
+                        width: 10,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.black,
+                            strokeAlign: BorderSide.strokeAlignCenter,
+                            strokeWidth: BorderSide.strokeAlignOutside,
+                          ),
+                        ),
+                      );
+                    },
+                  )
+              ),
+            );
+          });
+    }
+    return Padding(
+        padding: EdgeInsets.symmetric(vertical: 10),
         child: Container(
           height: 80,
           decoration: BoxDecoration(
@@ -332,19 +384,22 @@ class _AgrItemCardState extends State<AgrItemCard> {
                 height: 65,
                 width: 65,
 
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: ColorFiltered(
-                    colorFilter: ColorFilter.mode(
-                        imageColor,
-                        BlendMode.modulate
+                child: GestureDetector(
+                  onTap: (){viewItem(widget.itemLink);},
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: ColorFiltered(
+                      colorFilter: ColorFilter.mode(
+                          imageColor,
+                          BlendMode.modulate
 
-                    ),
-                    child: CachedNetworkImage(
-                      imageUrl: widget.itemLink,
-                      fit: BoxFit.cover,
-                      //color: cardColor==Color(0xffCDCDCD)?Color(0xffCDCDCD):Colors.green,
-                      // ,
+                      ),
+                      child: CachedNetworkImage(
+                        imageUrl: widget.itemLink,
+                        fit: BoxFit.cover,
+                        //color: cardColor==Color(0xffCDCDCD)?Color(0xffCDCDCD):Colors.green,
+                        // ,
+                      ),
                     ),
                   ),
                 ),
@@ -352,7 +407,7 @@ class _AgrItemCardState extends State<AgrItemCard> {
               Padding(
                 padding: const EdgeInsets.only(left: 10),
                 child: SizedBox(
-                  width: 140,
+                  // width: 140,
                   child: Text(
                       widget.itemName,
                       style: GoogleFonts.lato(
@@ -360,15 +415,14 @@ class _AgrItemCardState extends State<AgrItemCard> {
                       )
                   ),
                 )),
+              Spacer(),
               Container(
-                width: 100,
-                child: Flexible(
-                  child: Text(status,
-                    style: GoogleFonts.lato(textStyle: TextStyle(fontSize: 18,color: statusColour)),
-                    textAlign: TextAlign.end,
-                  ),
+                child: Text(status,
+                  style: GoogleFonts.lato(textStyle: TextStyle(fontSize: 18,color: statusColour)),
+                  textAlign: TextAlign.end,
                 ),
               ),
+              HorizontalPadding(paddingSize: 9)
 
 
             ],

@@ -18,6 +18,8 @@ import 'package:farm_pro/Utilities/custom.dart';
 import 'package:farm_pro/Utilities/CustomWidgets.dart';
 import 'package:farm_pro/pages/HomePage.dart';
 
+import '../../customFunction.dart';
+
 class SignUpForm extends StatefulWidget {
   const SignUpForm({super.key});
   @override
@@ -409,6 +411,10 @@ class _SignUpFormState extends State<SignUpForm> {
     }
     else{
       bool success=true;
+
+      //loading
+      loadAnimation(context);
+
       await _uploadProfile();
       await _detailsRef.update({
         idController.text : {
@@ -425,8 +431,20 @@ class _SignUpFormState extends State<SignUpForm> {
           },
           "profile" : urlDownload ?? user?.photoURL ?? null
         }
-      }).catchError((error){ print("error: $error");success=false;} );
+      }).catchError((error){
+
+        //close loading
+        Navigator.pop(context);
+
+        print("error: $error");
+        success=false;
+        PopUp(context,'$error!', 30, Colors.redAccent, FontWeight.w400, "Continue");
+      });
       if(success){
+
+        //close loading
+        Navigator.pop(context);
+
         return showDialog
           (context: context,
             builder: (BuildContext context){
@@ -568,7 +586,6 @@ class _SignUpFormState extends State<SignUpForm> {
             const VerticalPadding(paddingSize: 25),
 
             //name
-            // CustomTextBox(controller: nameController,Title: 'Name',errorText: "Name can't be empty and less than 4 characters!",errorCondition: nameError,helperText: '*Name should have at least 4 characters', hintText: user?.email,),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
