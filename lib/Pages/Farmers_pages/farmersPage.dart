@@ -13,9 +13,10 @@ import 'package:farm_pro/Utilities/CustomWidgets.dart';
 import '../../global_variable.dart';
 
 class FarmerPageCard extends StatefulWidget {
-  const FarmerPageCard({super.key, required this.detail, required this.userDetail});
-  final dynamic detail;
-  final dynamic userDetail;
+  const FarmerPageCard({super.key, required this.farmerDetail, required this.details, required this.ref});
+  final dynamic farmerDetail;
+  final dynamic details;
+  final ref;
   @override
   State<FarmerPageCard> createState() => _FarmerPageCardState();
 }
@@ -32,7 +33,7 @@ class _FarmerPageCardState extends State<FarmerPageCard> {
             onTap: (){
               Navigator.push(context, CupertinoPageRoute(
               //fullscreenDialog: true  ,
-              builder: (context)=> DetailsPage(detail: widget.detail, userDetail: widget.userDetail,)));
+              builder: (context)=> DetailsPage(farmerDetail: widget.farmerDetail, details: widget.details,ref: widget.ref)));
             },
 
             child: Container(
@@ -64,7 +65,7 @@ class _FarmerPageCardState extends State<FarmerPageCard> {
                                   child: ClipRRect(
                                       borderRadius: BorderRadius.circular(8),
                                       child: CachedNetworkImage(
-                                        imageUrl: widget.detail['profile'] ?? placeholderprofileLink,
+                                        imageUrl: widget.farmerDetail['profile'] ?? placeholderprofileLink,
                                         imageBuilder: (context,imageProvider){
                                           return Container(
                                             decoration: BoxDecoration(
@@ -96,7 +97,7 @@ class _FarmerPageCardState extends State<FarmerPageCard> {
                           child: ClipRRect(
                               borderRadius: BorderRadius.circular(8),
                               child: CachedNetworkImage(
-                                imageUrl: widget.detail['profile'] ?? placeholderprofileLink,
+                                imageUrl: widget.farmerDetail['profile'] ?? placeholderprofileLink,
                                 imageBuilder: (context,imageProvider){
                                   return Container(
                                     decoration: BoxDecoration(
@@ -136,7 +137,7 @@ class _FarmerPageCardState extends State<FarmerPageCard> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Text(widget.detail['name'],style: GoogleFonts.lato(
+                          Text(widget.farmerDetail['name'],style: GoogleFonts.lato(
                             textStyle: const TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.w400,
@@ -151,7 +152,7 @@ class _FarmerPageCardState extends State<FarmerPageCard> {
                               scrollDirection: Axis.horizontal,
                               child: Row(
                                 children:[
-                                  for(var i in widget.detail['farm_type'])
+                                  for(var i in widget.farmerDetail['farm_type'])
                                     FarmTypeFloat(typeName: i),
                                 ],
                               ),),
@@ -172,7 +173,7 @@ class _FarmerPageCardState extends State<FarmerPageCard> {
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                     const HorizontalPadding(paddingSize: 15),
-                                    Text(widget.detail['contact_details']['pno'],
+                                    Text(widget.farmerDetail['contact_details']['pno'],
                                         style: const TextStyle(
                                           color: Colors.black,
                                      )),
@@ -185,7 +186,7 @@ class _FarmerPageCardState extends State<FarmerPageCard> {
                                 left:-12,
                                 top: -12,
                                 child: IconButton(onPressed: ()async{
-                                String p=widget.detail['contact_details']['pno'];
+                                String p=widget.farmerDetail['contact_details']['pno'];
                                 Uri phone=Uri.parse('tel:$p');
                                 if(await launchUrl((phone))){
                                   debugPrint("can dial");
@@ -262,14 +263,14 @@ class FarmTypeFloat extends StatelessWidget {
 }
 
 
-class FarmerPage2 extends StatefulWidget {
-  const FarmerPage2({super.key});
+class FarmerPage extends StatefulWidget {
+  const FarmerPage({super.key});
 
   @override
-  State<FarmerPage2> createState() => _FarmerPage2State();
+  State<FarmerPage> createState() => _FarmerPageState();
 }
 
-class _FarmerPage2State extends State<FarmerPage2> {
+class _FarmerPageState extends State<FarmerPage> {
 
   //reading farmers data from firebase
 
@@ -284,7 +285,6 @@ class _FarmerPage2State extends State<FarmerPage2> {
         _firebaseDetails=event.snapshot.value;
         _allUsers=_firebaseDetails.keys.toList();
         searchResults=_allUsers.where((e)=>_firebaseDetails[e]['farmer?']==true).toList();
-
       });
     });
   }
@@ -315,7 +315,7 @@ class _FarmerPage2State extends State<FarmerPage2> {
     return Column(
         children:[
           for(var i in searchResults)
-            FarmerPageCard(detail: _firebaseDetails[i],userDetail: _firebaseDetails['hitori goto']),
+            FarmerPageCard(farmerDetail: _firebaseDetails[i],details: _firebaseDetails,ref: ref),
 
         ]
     );

@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:farm_pro/Pages/Farmers_pages/detailsAdvanced.dart';
 import 'package:farm_pro/Utilities/CustomWidgets.dart';
+import 'package:farm_pro/Utilities/custom.dart';
+import 'package:farm_pro/customFunction.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -16,15 +18,15 @@ import '../../global_variable.dart';
 
 
 class DetailsPage extends StatefulWidget {
-  const DetailsPage({super.key, required this.detail,required this.userDetail});
-  final dynamic detail;
-  final dynamic userDetail;
+  const DetailsPage({super.key, required this.farmerDetail,required this.details, required this.ref});
+  final dynamic farmerDetail;
+  final dynamic details;
+  final ref;
   @override
   State<DetailsPage> createState() => _DetailsPageState();
 }
 
 class _DetailsPageState extends State<DetailsPage> {
-
 
   @override
   Widget build(BuildContext context) {
@@ -42,12 +44,13 @@ class _DetailsPageState extends State<DetailsPage> {
     ];
     items.sort((a,b)=>a.itemStatus.compareTo(b.itemStatus));
     String farmerRating;
-    if(widget.detail['rating']['rate']<1.0){
+    if(widget.farmerDetail['rating']['rate']<1.0){
       farmerRating='---';
     }
     else{
-      farmerRating=widget.detail['rating']['rate'].toStringAsFixed(2);
+      farmerRating=widget.farmerDetail['rating']['rate'].toStringAsFixed(2);
     }
+
 
 
     return Scaffold(
@@ -60,7 +63,7 @@ class _DetailsPageState extends State<DetailsPage> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context)=>DetailsAdvanced(farmerDetails: widget.detail)));
+                          Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context)=>DetailsAdvanced(farmerDetails: widget.farmerDetail)));
                         },
                         child: Container(
                           height: 250,
@@ -81,13 +84,12 @@ class _DetailsPageState extends State<DetailsPage> {
                           ),
                         ),
                       ),
-                      //Image.network(widget.detail['farm_images'][0]),
                       Positioned(
                           top: 130,
                           left: 15,
                           child: GestureDetector(
                             onTap: (){
-                              Navigator.push(context, CupertinoPageRoute(builder: (BuildContext)=>DetailsAdvanced(farmerDetails: widget.detail)));
+                              Navigator.push(context, CupertinoPageRoute(builder: (BuildContext)=>DetailsAdvanced(farmerDetails: widget.farmerDetail)));
                             },
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,7 +102,7 @@ class _DetailsPageState extends State<DetailsPage> {
                                   ),
                                   textDirection: TextDirection.ltr,
                                 ),
-                                Text(widget.detail['name'],
+                                Text(widget.farmerDetail['name'],
                                   style: GoogleFonts.lato(
                                     fontSize: 30,
                                     fontWeight: FontWeight.w500,
@@ -118,7 +120,7 @@ class _DetailsPageState extends State<DetailsPage> {
 
                               //phone
                               IconButton(onPressed: ()async{
-                                String p=widget.detail['contact_details']['pno'];
+                                String p=widget.farmerDetail['contact_details']['pno'];
                                 Uri phone=Uri.parse('tel:$p');
                                 if(await launchUrl((phone))){
                                   debugPrint("can dial");
@@ -130,7 +132,7 @@ class _DetailsPageState extends State<DetailsPage> {
 
                               //mail
                               IconButton(onPressed: ()async{
-                                String mail=widget.detail['contact_details']['mail_id'];
+                                String mail=widget.farmerDetail['contact_details']['mail_id'];
                                 Uri email=Uri.parse('mailto:$mail');
                                 await launchUrl(email);
                               }, icon: Icon(Icons.mail_outline)),
@@ -154,7 +156,7 @@ class _DetailsPageState extends State<DetailsPage> {
                                           onTap: (){
                                             showDialog(context: context,
                                                 builder: (BuildContext context){
-                                                  return RatingWidget(detail: widget.detail,userDetail: widget.userDetail,);
+                                                  return RatingWidget(farmerDetail: widget.farmerDetail,details: widget.details,ref: widget.ref,);
                                                 });
                                           },
                                           child: Opacity(opacity: 0.5,
@@ -200,7 +202,7 @@ class _DetailsPageState extends State<DetailsPage> {
                                     child: ClipRRect(
                                         borderRadius: BorderRadius.circular(8),
                                         child: CachedNetworkImage(
-                                          imageUrl: widget.detail['profile'] ?? placeholderprofileLink,
+                                          imageUrl: widget.farmerDetail['profile'] ?? placeholderprofileLink,
                                           imageBuilder: (context,imageProvider){
                                             return Container(
                                               decoration: BoxDecoration(
@@ -233,7 +235,7 @@ class _DetailsPageState extends State<DetailsPage> {
                             height: 100,
                             width: 100,
                             child: CachedNetworkImage(
-                              imageUrl: widget.detail['profile'] ?? placeholderprofileLink,
+                              imageUrl: widget.farmerDetail['profile'] ?? placeholderprofileLink,
                               imageBuilder: (context,imageProvider){
                                 return Container(
                                   decoration: BoxDecoration(
@@ -277,7 +279,7 @@ class _DetailsPageState extends State<DetailsPage> {
                             IconButton(onPressed: (){
                               Navigator.push(context,
                                 CupertinoPageRoute(builder: (BuildContext context){
-                                  return DetailsAdvanced(farmerDetails: widget.detail);
+                                  return DetailsAdvanced(farmerDetails: widget.farmerDetail);
                                 })
                               );
                             }, icon: const Icon(Icons.info,
@@ -433,9 +435,10 @@ class _AgrItemCardState extends State<AgrItemCard> {
 
 
 class RatingWidget extends StatefulWidget {
-  RatingWidget({super.key, required this.detail,required this.userDetail});
-  final dynamic detail;
-  final dynamic userDetail;
+  RatingWidget({super.key, required this.farmerDetail,required this.details,required this.ref});
+  final dynamic farmerDetail;
+  final dynamic details;
+  final ref;
   @override
   State<RatingWidget> createState() => _RatingWidgetState();
 }
@@ -447,10 +450,10 @@ class _RatingWidgetState extends State<RatingWidget> {
   @override
   void initState(){
     super.initState();
-    farmerId=widget.detail['id'];
-    userRatedFarmers=widget.userDetail['rated'].keys.toList();
-    if(widget.userDetail['rated'][farmerId]!=null) {
-      curRating = widget.userDetail['rated'][farmerId];
+    farmerId=widget.farmerDetail['id'];
+    // userRatedFarmers=widget.details[userId]['rated'].keys.toList();
+    if(widget.details[userId]['rated'][farmerId]!=null) {
+      curRating = widget.details[userId]['rated'][farmerId].toDouble();
     }
   }
   @override
@@ -458,14 +461,14 @@ class _RatingWidgetState extends State<RatingWidget> {
     return Center(
       child: Padding(padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Container(
-          height: 190,
+          height: 220,
           decoration: BoxDecoration(
             color: const Color(0xFFf5fff7),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
             children: [
-              const VerticalPadding(paddingSize: 10),
+              const VerticalPadding(paddingSize: 15),
               Center(
                   child: DefaultTextStyle(
                     style: const TextStyle(),
@@ -478,7 +481,7 @@ class _RatingWidgetState extends State<RatingWidget> {
                     ),
                   )
               ),
-              const VerticalPadding(paddingSize: 5),
+              const VerticalPadding(paddingSize: 10),
               RatingBar.builder(
                   initialRating: curRating,
                   minRating: 0.5,
@@ -486,9 +489,12 @@ class _RatingWidgetState extends State<RatingWidget> {
                   itemCount: 5,
                   allowHalfRating: true,
                   glow: false,
+                  itemSize: 45,
+                  unratedColor: myGreen,
                   itemBuilder: (context, _)=> const Icon(
                     Icons.star,
                     color: Color(0xFF95C19E),
+                    // color: Colors.teal,
                   ),
                   itemPadding: const EdgeInsets.symmetric(horizontal: 5),
                   onRatingUpdate: (rating){
@@ -502,52 +508,73 @@ class _RatingWidgetState extends State<RatingWidget> {
                 textDirection: TextDirection.rtl,
                 children: [
                   const HorizontalPadding(paddingSize: 5),
-                  TextButton(onPressed: (){
-
+                  TextButton(onPressed: () async {
                     //rating system
+                    double noOfRating=widget.farmerDetail['rating']['noOfRating'].toDouble();
+                    double rate=widget.farmerDetail['rating']['rate'].toDouble();
+                    double userRating=0;
+                    String farmerId=widget.farmerDetail['id'];
 
-                      setState(() {
-                      double noOfRating=widget.detail['rating']['noOfRating'].toDouble();
-                      double rate=widget.detail['rating']['rate'].toDouble();
-                      double userRating=0;
-                      String farmerId=widget.detail['id'];
+                    //firebase refernce to farmer and user
+                    final _farmerRef = widget.ref.child('details/$farmerId/rating');
+                    final _userRef= widget.ref.child('details/$userId/rated');
+                    bool success=true,success2=true;
+                    double finalRating=rate;
 
-                      //user already rated the farmer
-                      if(widget.userDetail['rated'][farmerId]!=null){
-                        userRating=widget.userDetail['rated'][farmerId].toDouble();
-                          //debugPrint('Farmer Rating: $rate');
-                          //debugPrint('User prev Rating: $userRating\nUser cur rating: $curRating');
-                          double temp=rate*noOfRating;
-                          temp-=userRating;
-                          temp+=curRating;
-                          widget.detail['rating']['rate']=(temp/noOfRating).toDouble();
-                          widget.userDetail['rated'].update(farmerId,(value)=>curRating.toDouble());
-                          //widget.userDetail['rated'][farmerId]=(curRating).toDouble();
-                          //debugPrint('Changed farmer Rating; ${widget.detail['rating']['rate']}');
-                          //debugPrint('Changed User Rating: ${widget.userDetail['rated'][farmerId]}');
-                      }
+                    //loading animation
+                    loadAnimation(context);
 
-                      //user havent rated the farmer already
-                      else{
-                        debugPrint('this working-else');
-                        setState(() {
-                              double temp=rate*noOfRating;
-                              temp+=curRating;
-                              noOfRating=noOfRating+1;
-                              temp=(temp/noOfRating);
-                              widget.detail['rating']['rate']=temp.toDouble();
-                              widget.detail['rating']['noOfRating']=noOfRating.toInt();
-                              widget.userDetail['rated'][farmerId]=curRating.toDouble();
-                              //debugPrint('new Rating: ${widget.detail['rating']['rate']}\n new noOfRating: ${widget.detail['rating']['noOfRating']}');
-                              //debugPrint('userRating: ${widget.userDetail['rated'][farmerId]}');
-                        });
-                      }
+                    //user already rated the farmer
+                    if(widget.details[userId]['rated'][farmerId]!=null){
+                      userRating=widget.details[userId]['rated'][farmerId].toDouble();
+                      debugPrint("user already rated: ${widget.details[userId]['rated'][farmerId]}");
+                      debugPrint('Farmer Rating: $rate');
+                      debugPrint('User prev Rating: $userRating\nUser cur rating: $curRating');
+
+                      //calculations
+                      double temp=rate*noOfRating;
+                      temp-=userRating;
+                      temp+=curRating;
+                      finalRating = (temp/noOfRating).toDouble();
+                    }
+
+                    // user havent rated the farmer already
+                    else{
+                      debugPrint('farmer havent rated already');
+                      double temp=rate*noOfRating;
+                      temp+=curRating;
+                      noOfRating=noOfRating+1;
+                      temp=(temp/noOfRating);
+                      finalRating= temp.toDouble();
+                    }
+                    //changing info in firebase
+
+                    //changing rating
+                    await _farmerRef.update({
+                      "noOfRating": noOfRating,
+                      "rate": finalRating
+                    }).catchError((e){
+                      debugPrint(e);
+                      success=false;
+                      PopUp(context,'$e', 30, Colors.redAccent, FontWeight.w400, "Continue");
+                    });
+
+                    //changing user data
+                    await _userRef.update({
+                      farmerId: curRating
+                    }).catchError((e){
+                      success2=false;
+                      PopUp(context,'$e', 30, Colors.redAccent, FontWeight.w400, "Continue");
+                    });
+
+                    if(success && success2) {
+                      debugPrint('success');
+
+                      //close animation
                       Navigator.of(context).pop();
+                      //closing the rating bar and reloading the page
                       Navigator.of(context).pop();
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (BuildContext context)=>DetailsPage(detail: widget.detail, userDetail: widget.userDetail,),)
-                      );
-                      });
+                      }
                     }, child: Text('RATE',
                     style: GoogleFonts.lato(
                       color: Colors.black87,
@@ -555,6 +582,8 @@ class _RatingWidgetState extends State<RatingWidget> {
                       fontWeight: FontWeight.bold
                     ),
                   )),
+
+                  //cancel button
                   TextButton(onPressed: (){
                     Navigator.of(context).pop();
                   }, child: Text("CANCEL",
@@ -566,7 +595,7 @@ class _RatingWidgetState extends State<RatingWidget> {
                   )),
                 ],
               ),
-              const VerticalPadding(paddingSize: 10),
+              const VerticalPadding(paddingSize: 8),
             ],
           ),
         ),

@@ -24,7 +24,6 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import '../Utilities/CustomWidgets.dart';
 import '../customFunction.dart';
 import 'Authentication_pages/SignUpForm.dart';
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
   @override
@@ -618,9 +617,9 @@ class _HomePageState extends State<HomePage> {
     FirebaseDatabase.instance.setPersistenceEnabled(true);
 
     pages = <Widget>[
-      const FarmerPage2(),
+      const FarmerPage(),
       SchemesPage(),
-      SocialPage(),
+      const SocialPage(),
     ];
 
     _checkUserExists(false);

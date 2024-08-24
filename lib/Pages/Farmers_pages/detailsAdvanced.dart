@@ -57,6 +57,7 @@ class _DetailsAdvancedState extends State<DetailsAdvanced> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
+                    const VerticalPadding(paddingSize: 4),
                     CustomDivider(
                       color: darkTeal,
                       thickness: 3,
@@ -111,7 +112,7 @@ class _DetailsAdvancedState extends State<DetailsAdvanced> {
                           ],
                         ),),
                     ),
-                    const VerticalPadding(paddingSize: 10),
+                    const VerticalPadding(paddingSize: 20),
                     Text('Description',
                       style: GoogleFonts.lato(
                         fontSize: 35,
@@ -127,31 +128,21 @@ class _DetailsAdvancedState extends State<DetailsAdvanced> {
                         ),
                       ),
                     ),
-                    VerticalPadding(paddingSize: 30),
-                    Container(
-                      height: 300,
-                      decoration: BoxDecoration(
-                        color: myGreen,
+                    VerticalPadding(paddingSize: 20),
+                    Text('Address',
+                      style: GoogleFonts.lato(
+                        fontSize: 35,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                    VerticalPadding(paddingSize: 5),
-                    InkWell(
-                      onTap: ()async{
-                        Uri _url=Uri.parse("https://www.google.com/maps?ll=10.728578,79.01826&z=19&t=m&hl=en&gl=US&mapclient=embed&cid=447860320795505436");
-                        if(await launchUrl(_url)){
-                          await launchUrl(_url);
-                        }
-                        else{
-
-                        }
-                      },
-                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 8),
-                        child: Text(widget.farmerDetails['address'],
-                          style: GoogleFonts.lato(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w400,
-                              color: lightTeal
-                          ),
+                    const VerticalPadding(paddingSize: 5),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Text(widget.farmerDetails['address'],
+                        style: GoogleFonts.lato(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black
                         ),
                       ),
                     ),

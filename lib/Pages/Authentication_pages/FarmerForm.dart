@@ -93,10 +93,9 @@ class _FarmerformState extends State<Farmerform> {
       loadAnimation(context);
 
       bool success=true;
-      String error;
-      List DomainVals=[];
+      List domainVals=[];
       for(var i in DomainControllers){
-        if(i.text.isNotEmpty) DomainVals.add(i.text);
+        if(i.text.isNotEmpty) domainVals.add(i.text);
       }
       dynamic _userDetailsRef = FirebaseDatabase.instance.ref('details/$userId');
       await _userDetailsRef.update({
@@ -107,10 +106,9 @@ class _FarmerformState extends State<Farmerform> {
           },
           "about" : DescripionController.text,
           "address" : AddressController1.text + "\n" + AddressController2.text + "\n" + AddressController3.text,
-          "farm_type" : DomainVals
+          "farm_type" : domainVals
       }
       ).catchError((e){
-        error=e;
         success=false;
         PopUp(context,'$e', 30, Colors.redAccent, FontWeight.w400, "Continue");
       });
