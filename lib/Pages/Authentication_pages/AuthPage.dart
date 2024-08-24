@@ -75,24 +75,4 @@ class _LoginorRegisterState extends State<LoginorRegister> {
   }
 }
 
-class example extends StatefulWidget {
-  const example({super.key,required this.detail});
-  final dynamic detail;
-  @override
-  State<example> createState() => _exampleState();
-}
 
-class _exampleState extends State<example> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          Center(
-            child: Text(widget.detail['hitori goto']['name']),
-          )
-        ],
-      ),
-    );
-  }
-}

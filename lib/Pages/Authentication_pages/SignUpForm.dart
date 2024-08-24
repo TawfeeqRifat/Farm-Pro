@@ -534,6 +534,7 @@ class _SignUpFormState extends State<SignUpForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(
         physics: const NeverScrollableScrollPhysics(),
         child: Column(

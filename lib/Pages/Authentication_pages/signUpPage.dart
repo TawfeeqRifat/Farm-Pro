@@ -73,42 +73,44 @@ class _SignUpPageState extends State<SignUpPage> {
     }
     else{
 
-      //loading widget
+      // //verify email popUp
+      // verifyEmailPopUp(context);
+
+      //loading animation
       loadAnimation(context);
-
       try{
-        final credential=await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text,
-          password: passwordController.text,
-        );
+          final credential=await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            email: emailController.text,
+            password: passwordController.text,
+          );
+          //close animation
+          Navigator.of(context).pop();
 
-        //close loading
-        Navigator.pop(context);
 
-        debugPrint("working here!");
-      } on FirebaseAuthException catch(e){
+          debugPrint("working here!");
+        } on FirebaseAuthException catch(e){
 
-        //close loading
-        Navigator.pop(context);
+          //close animation
+          Navigator.pop(context);
 
-        //error handling
-        switch(e.code){
-          case 'weak-password':
-            setState(() {
-              _passwordErrorMessage="Weak Password";
-              passwordError=true;
-            });
-            break;
-          case 'email-already-in-use':
-            setState(() {
-              _mailErrorMessage="E-Mail already in Use!";
-              mailError=true;
-            });
-            break;
-          default:
-            ThrowError(e.code);
+          //error handling
+          switch(e.code){
+            case 'weak-password':
+              setState(() {
+                _passwordErrorMessage="Weak Password";
+                passwordError=true;
+              });
+              break;
+            case 'email-already-in-use':
+              setState(() {
+                _mailErrorMessage="E-Mail already in Use!";
+                mailError=true;
+              });
+              break;
+            default:
+              ThrowError(e.code);
+          }
         }
-      }
 
     }
   }
@@ -359,4 +361,43 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 }
 
+Future verifyEmailPopUp(context){
+  return showDialog(context: context, barrierDismissible: false,
+      builder: (BuildContext context)
+  {
+    return Center(
+        child: Container(
+          height: 300,
+          width: 300,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: myBackground
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: Text("Verification Email\nSent to You",
+                    style: GoogleFonts.lato(
+                      fontSize: 25,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+              VerticalPadding(paddingSize: 20),
+              LoadingAnimationWidget.threeRotatingDots(
+                color: Colors.teal,
+                size: 70,
+              ),
+            ]
+          )
+        )
+    );
+  });
+}
 

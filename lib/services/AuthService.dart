@@ -1,29 +1,28 @@
-import 'package:firebase_core/firebase_core.dart';
+import 'package:farm_pro/customFunction.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class AuthService{
+signInWithGoogle(context) async{
+  //begin sign in processs
 
-  // Google Sign in
-  signInWithGoogle() async{
-    //begin sign in processs
-    GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
+  //loading begin
+  loadAnimation(context);
 
-    //obtain auth details from the requset
-    GoogleSignInAuthentication? gAuth = await gUser?.authentication;
+  GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
 
-    //create a new user credential
-    AuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: gAuth?.accessToken,
-      idToken:  gAuth?.idToken,
-    );
+  //obtain auth details from the requset
+  GoogleSignInAuthentication? gAuth = await gUser?.authentication;
 
-    //sign in
-    UserCredential userCredential= await FirebaseAuth.instance.signInWithCredential(credential);
+  //create a new user credential
+  AuthCredential credential = GoogleAuthProvider.credential(
+    accessToken: gAuth?.accessToken,
+    idToken:  gAuth?.idToken,
+  );
 
-    print(userCredential.user?.displayName);
+  //sign in
+  await FirebaseAuth.instance.signInWithCredential(credential);
 
-    return userCredential;
-  }
+  //close loading
+  Navigator.pop(context);
 }
-

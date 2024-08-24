@@ -14,6 +14,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import '../../global_variable.dart';
+import '../../Pages/HomePage.dart';
+import '../Authentication_pages/SignUpForm.dart';
 
 
 
@@ -49,6 +51,11 @@ class _DetailsPageState extends State<DetailsPage> {
     }
     else{
       farmerRating=widget.farmerDetail['rating']['rate'].toStringAsFixed(2);
+    }
+
+    bool checkIfUser(){
+     if(userId!=null) return true;
+     else return false;
     }
 
 
@@ -154,10 +161,15 @@ class _DetailsPageState extends State<DetailsPage> {
                                       const HorizontalPadding(paddingSize: 3),
                                       GestureDetector(
                                           onTap: (){
-                                            showDialog(context: context,
-                                                builder: (BuildContext context){
-                                                  return RatingWidget(farmerDetail: widget.farmerDetail,details: widget.details,ref: widget.ref,);
-                                                });
+                                            if(checkIfUser()){
+                                              showDialog(context: context,
+                                                  builder: (BuildContext context){
+                                                    return RatingWidget(farmerDetail: widget.farmerDetail,details: widget.details,ref: widget.ref,);
+                                                  });
+                                            }
+                                            else{
+                                              createAccountPopUp(context);
+                                            }
                                           },
                                           child: Opacity(opacity: 0.5,
                                             child: Container(
@@ -603,4 +615,6 @@ class _RatingWidgetState extends State<RatingWidget> {
     );
   }
 }
+
+
 

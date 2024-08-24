@@ -64,65 +64,7 @@ class _HomePageState extends State<HomePage> {
         return;
       }
     }
-    return _createAccountPopUp();
-  }
-
-  Future<void> _createAccountPopUp() async {
-      return showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return Center(
-              child: Container(
-                height: 300,
-                width: 300,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: myBackground),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Center(
-                      child: Text(
-                        'Finish Setting Up?',
-                        style: GoogleFonts.lato(
-                          fontSize: 40,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    const VerticalPadding(paddingSize: 20),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                        Navigator.push(
-                            context,
-                            CupertinoPageRoute(
-                                builder: (context) => SignUpForm()));
-                      },
-                      child: Container(
-                        height: 50,
-                        width: 200,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            color: darkerGreen),
-                        child: Text(
-                          'Continue',
-                          style: GoogleFonts.lato(
-                            fontWeight: FontWeight.w700,
-                            color: myBackground,
-                            fontSize: 30,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          });
+    return createAccountPopUp(context);
   }
 
   //check if farmer
@@ -847,4 +789,3 @@ class _HomePageState extends State<HomePage> {
         ));
   }
 }
-

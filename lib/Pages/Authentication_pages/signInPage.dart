@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:farm_pro/Utilities/CustomWidgets.dart';
 import 'package:farm_pro/Utilities/custom.dart';
+import 'package:farm_pro/services/AuthService.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -103,6 +105,46 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
 
 
   }
+
+  forgotPassword() async {
+    if(emailController.text.isEmpty){
+      setState(() {
+        errorMessage="Mail can't be empty!";
+        wrongMail=true;
+      });
+      return;
+    }
+
+    //loading Animation
+    loadAnimation(context);
+
+    try{
+
+      PopUp(context, "Password Reset\nEmail Sent!",30,Colors.black,FontWeight.w400,"Continue");
+
+    } on FirebaseAuthException catch (e){
+
+      //close loading
+      Navigator.of(context).pop();
+
+      if(e.code=='invalid-credential'){
+        setState((){
+          errorMessage="Email/Password Wrong";
+          wrongMail=true;
+          wrongPassword =true;
+        });
+      }
+
+      //too many attempts
+      else if(e.code=="too-many-requests"){
+        PopUp(
+            context, "Too Many Attempts! \nTry Again Later.", 30, Colors.redAccent,FontWeight.w400,"Okay");
+      }
+    }
+
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,168 +153,192 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
       backgroundColor: myBackground,
       body: SafeArea(
         child: SingleChildScrollView(
+          physics: NeverScrollableScrollPhysics(),
           child: Padding(padding: const EdgeInsets.symmetric(horizontal: 25),
-              child: Center(
-                child: Column(
-                  children: [
-                    const VerticalPadding(paddingSize: 95),
-                    Container(
-                        child: Text('FarmPro',
-                          style: GoogleFonts.signikaNegative(
-                            fontSize: 50,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.green,
-                          ),
-                        )
-                    ),
-                    const VerticalPadding(paddingSize: 30),
-          
-                    //mail Id widget
-                    MyTextField(
-                      controller: emailController,
-                      hintText: 'Email Id',
-                      obscureText: false,
-                      errorText: errorMessage,
-                      errorCondition: wrongMail
-                    ),
-                    const VerticalPadding(paddingSize: 10),
-          
-                    //password widget
-                    TextField(
-                        //onChanged: onQueryChanged,
-                        onChanged: (String Value){
-                          setState(() {
-                            wrongPassword=false;
-                          });
-                        },
-                        controller: passwordController,
-                        decoration: InputDecoration(
-          
-                          enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: darkerGreen)
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.green.shade100)
-                          ),
-                          errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.redAccent.shade100)
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.redAccent.shade100)
-                          ),
-          
-                          fillColor: Colors.green.shade50,
-                          filled: true,
-                          hintText: 'Password',
-                          hintStyle: GoogleFonts.lato(
-                            color: Colors.green.shade400,
-                          ),
+              child: Column(
+                children: [
+                  const VerticalPadding(paddingSize: 85),
+                  Container(
+                      child: Text('FarmPro',
+                        style: GoogleFonts.signikaNegative(
+                          fontSize: 50,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green,
+                        ),
+                      )
+                  ),
+                  const VerticalPadding(paddingSize: 30),
 
-                          // errorText: wrongPassword? 'Incorrect Password': null,
-                          errorText: wrongPassword? errorMessage: null,
-          
-                          suffixIcon: IconButton(
-                            onPressed: (){
-                              setState(() {
-                                isPasswordVisible=!isPasswordVisible;
-                              });
-                            },
-                            icon: Icon(
-                              isPasswordVisible?Icons.visibility_rounded:Icons.visibility_off_rounded,
-                              color: Colors.green.shade600,
-                            ),
+                  //mail Id widget
+                  MyTextField(
+                    controller: emailController,
+                    hintText: 'Email Id',
+                    obscureText: false,
+                    errorText: errorMessage,
+                    errorCondition: wrongMail
+                  ),
+                  const VerticalPadding(paddingSize: 10),
+
+                  //password widget
+                  TextField(
+                      //onChanged: onQueryChanged,
+                      onChanged: (String Value){
+                        setState(() {
+                          wrongPassword=false;
+                        });
+                      },
+                      controller: passwordController,
+                      decoration: InputDecoration(
+
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: darkerGreen)
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.green.shade100)
+                        ),
+                        errorBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.redAccent.shade100)
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.redAccent.shade100)
+                        ),
+
+                        fillColor: Colors.green.shade50,
+                        filled: true,
+                        hintText: 'Password',
+                        hintStyle: GoogleFonts.lato(
+                          color: Colors.green.shade400,
+                        ),
+
+                        // errorText: wrongPassword? 'Incorrect Password': null,
+                        errorText: wrongPassword? errorMessage: null,
+
+                        suffixIcon: IconButton(
+                          onPressed: (){
+                            setState(() {
+                              isPasswordVisible=!isPasswordVisible;
+                            });
+                          },
+                          icon: Icon(
+                            isPasswordVisible?Icons.visibility_rounded:Icons.visibility_off_rounded,
+                            color: Colors.green.shade600,
                           ),
                         ),
-                        obscureText: !isPasswordVisible,
-                        style: GoogleFonts.lato(
-                          color: Colors.green.shade700,
-                        ),
-                        cursorColor: Colors.teal,
-                        showCursor: true,
-                    ),
-          
-                    const VerticalPadding(paddingSize: 4),
-          
-                    //forgot password
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        GestureDetector(
-                            onTap: (){
-                            },
-                            child: Text('Forgot Password?',
-                              style: GoogleFonts.lato(
-                                color: Colors.green.shade900,
-                                fontSize:14,
-                              ),
-                            ),
-                        ),
-                      ],
-                    ),
-                    const VerticalPadding(paddingSize: 20),
-          
-                    //sign in button
-                    GestureDetector(
-                      onTap: signIn,
-                      child: Container(
-                        height: 60,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.green.shade700,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Center(
-                          child: Text('Sign In',
-                              style: GoogleFonts.lato(
-                                color: myBackground,
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold
-                              ),
-                        )
-                        )
                       ),
-                    ),
-                    const VerticalPadding(paddingSize: 20),
-          
-                    //-------------or-------------
-                    Row(
-                      children: [
-                        Expanded(child: CustomDivider(
-                          color: Colors.green.shade900,
-                        )),
-                        Padding(padding: const EdgeInsets.symmetric(horizontal: 5),
-                          child: Text('OR',
+                      obscureText: !isPasswordVisible,
+                      style: GoogleFonts.lato(
+                        color: Colors.green.shade700,
+                      ),
+                      cursorColor: Colors.teal,
+                      showCursor: true,
+                  ),
+
+                  const VerticalPadding(paddingSize: 4),
+
+                  //forgot password
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      GestureDetector(
+                          onTap: () async {
+                            forgotPassword();
+                          },
+                          child: Text('Forgot Password?',
                             style: GoogleFonts.lato(
-                                fontSize:15,
-                                color: Colors.green.shade900
+                              color: Colors.green.shade900,
+                              fontSize:14,
                             ),
                           ),
-                        ),
-                        Expanded(child: CustomDivider(
-                          color: Colors.green.shade900,
-                        )),
-                      ],
-                    ),
-          
-                    const VerticalPadding(paddingSize: 20),
-          
-                    //sign up
-                    GestureDetector(
-                      onTap: widget.triggerSignUp,
-                      child: Text('Sign Up?',
-                       style: GoogleFonts.lato(
-                         fontSize:22,
-                         fontWeight: FontWeight.bold,
-                         color: Colors.green.shade700,
-                       ),
                       ),
-                    )
-          
-          
-          
-                  ],
-                ),
-            )
+                    ],
+                  ),
+                  const VerticalPadding(paddingSize: 20),
+
+                  //sign in button
+                  GestureDetector(
+                    onTap: signIn,
+                    child: Container(
+                      height: 60,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.green.shade700,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Center(
+                        child: Text('Sign In',
+                            style: GoogleFonts.lato(
+                              color: myBackground,
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold
+                            ),
+                      )
+                      )
+                    ),
+                  ),
+                  const VerticalPadding(paddingSize: 20),
+
+                  //-------------or-------------
+                  Row(
+                    children: [
+                      Expanded(child: CustomDivider(
+                        color: Colors.green.shade900,
+                      )),
+                      Padding(padding: const EdgeInsets.symmetric(horizontal: 5),
+                        child: Text('OR',
+                          style: GoogleFonts.lato(
+                              fontSize:15,
+                              color: Colors.green.shade900
+                          ),
+                        ),
+                      ),
+                      Expanded(child: CustomDivider(
+                        color: Colors.green.shade900,
+                      )),
+                    ],
+                  ),
+
+                  const VerticalPadding(paddingSize: 20),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+
+                      //sign up
+                      GestureDetector(
+                        onTap: widget.triggerSignUp,
+                        child: Text('Sign Up?',
+                          style: GoogleFonts.lato(
+                            fontSize:22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green.shade700,
+                          ),
+                        ),
+                      ),
+                      HorizontalPadding(paddingSize: 35),
+                      //google sign
+                      GestureDetector(
+                        onTap: (){
+                          signInWithGoogle(context);
+                        },
+                        child: SizedBox(
+                          height: 100,
+                          width: 100,
+                          child: CachedNetworkImage(imageUrl: "https://lh3.googleusercontent.com/d_S5gxu_S1P6NR1gXeMthZeBzkrQMHdI5uvXrpn3nfJuXpCjlqhLQKH_hbOxTHxFhp5WugVOEcl4WDrv9rmKBDOMExhKU5KmmLFQVg"),
+                        ),
+                      ),
+                    ],
+                  ),
+
+
+
+                  const VerticalPadding(paddingSize: 20),
+
+
+
+
+
+                ],
+              )
           ),
         ),
       )
@@ -353,5 +419,7 @@ class _MyTextFieldState extends State<MyTextField> {
     );
   }
 }
+
+
 
 
