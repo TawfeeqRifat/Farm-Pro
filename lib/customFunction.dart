@@ -24,12 +24,15 @@ Future PopUp(context,message,double? fontsize,Color? fontcolor,FontWeight? fontw
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Center(
-                    child: Text(message,style: GoogleFonts.lato(
-                      fontSize: fontsize ?? 30,
-                      color: fontcolor ?? Colors.redAccent,
-                      fontWeight: fontweight?? FontWeight.w400,),
-                      textAlign: TextAlign.center,
-                    ),
+                    child: DefaultTextStyle(
+                      style: GoogleFonts.lato(
+                        fontSize: fontsize ?? 30,
+                        color: fontcolor ?? Colors.redAccent,
+                        fontWeight: fontweight?? FontWeight.w400,),
+                      child: Text(message,
+                        textAlign: TextAlign.center,
+                      ),
+                    )
                   ),
                 ),
                 VerticalPadding(paddingSize: 20),

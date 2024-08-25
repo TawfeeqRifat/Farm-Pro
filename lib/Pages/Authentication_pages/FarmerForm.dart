@@ -109,10 +109,18 @@ class _FarmerformState extends State<Farmerform> {
           "farm_type" : domainVals
       }
       ).catchError((e){
+
+        //close animation
+        Navigator.pop(context);
+
         success=false;
         PopUp(context,'$e', 30, Colors.redAccent, FontWeight.w400, "Continue");
       });
       if(success==true){
+
+        //close animation
+        Navigator.pop(context);
+
         Navigator.pop(context);
         Navigator.pop(context);
         Navigator.push(context, CupertinoPageRoute(builder: (BuildContext)=> ShopPage()));
@@ -410,14 +418,12 @@ class CusTextBoxAlone extends StatefulWidget {
     this.errorText,
     this.errorCondition,
     this.optionalCondition,
-    this.text,
     this.helperText,
     this.multiline,
   });
   final String? hintText;
   final TextEditingController controller;
   final String? errorText;
-  final String? text;
   final String? helperText;
   bool? errorCondition;
   bool? multiline;

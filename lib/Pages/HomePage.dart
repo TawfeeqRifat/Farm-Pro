@@ -18,12 +18,12 @@ import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:farm_pro/pages/Schemes_pages/schemesPage.dart';
-import 'package:farm_pro/pages/Farmers_pages/farmersPage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import '../Utilities/CustomWidgets.dart';
 import '../customFunction.dart';
 import 'Authentication_pages/SignUpForm.dart';
+import 'Farmers_pages/farmersPage.dart';
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
   @override
@@ -60,7 +60,9 @@ class _HomePageState extends State<HomePage> {
         });
 
         //call the accounts page
-        if(fwd==true )Navigator.push(context, CupertinoPageRoute(builder: (BuildContext)=> const AccountPage()));
+        if(fwd==true ) {
+          Navigator.push(context, CupertinoPageRoute(builder: (BuildContext)=> AccountPage(userDetails: firebaseDetails[userId],ref: ref,)));
+        }
         return;
       }
     }
@@ -513,6 +515,7 @@ class _HomePageState extends State<HomePage> {
   String? urlDownload;
 
   Future<void> _uploadProfile() async {
+
     //creating ref to the storage
     final path = 'UserData/profile/$userId';
     var ref = FirebaseStorage.instance.ref().child(path);
@@ -559,7 +562,7 @@ class _HomePageState extends State<HomePage> {
     FirebaseDatabase.instance.setPersistenceEnabled(true);
 
     pages = <Widget>[
-      const FarmerPage(),
+      FarmerPage(),
       SchemesPage(),
       const SocialPage(),
     ];
