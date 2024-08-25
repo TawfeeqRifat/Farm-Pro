@@ -79,7 +79,7 @@ class _HomePageState extends State<HomePage> {
         _createFarmerPopUp();
       }
       else{
-        Navigator.push(context, CupertinoPageRoute(builder: (BuildContext)=> const ShopPage()));
+        Navigator.push(context, CupertinoPageRoute(builder: (BuildContext)=> ShopPage(ref: ref.child('details/$userId'))));
         //call shop
       }
       print('user exists $userId');

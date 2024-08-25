@@ -123,7 +123,7 @@ class _FarmerformState extends State<Farmerform> {
 
         Navigator.pop(context);
         Navigator.pop(context);
-        Navigator.push(context, CupertinoPageRoute(builder: (BuildContext)=> ShopPage()));
+        Navigator.push(context, CupertinoPageRoute(builder: (BuildContext)=> ShopPage(ref: _userDetailsRef,mode: 'edit-mode',)));
       }
     }
   }
