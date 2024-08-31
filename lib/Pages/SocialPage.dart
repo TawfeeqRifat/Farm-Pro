@@ -15,7 +15,7 @@ class _SocialPageState extends State<SocialPage> {
 
   void callPop() async {
     await Future.delayed(Duration(microseconds: 1));
-    PopUp(context, "Coming Soon!", 30, Colors.black, FontWeight.w400,"Okay");
+    PopUp(context, "Coming Soon!", fontcolor:  Colors.black, ButtonText: "Okay");
   }
   @override
   void initState(){

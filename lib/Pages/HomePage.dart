@@ -79,7 +79,7 @@ class _HomePageState extends State<HomePage> {
         _createFarmerPopUp();
       }
       else{
-        Navigator.push(context, CupertinoPageRoute(builder: (BuildContext)=> ShopPage(ref: ref.child('details/$userId'))));
+        Navigator.push(context, CupertinoPageRoute(builder: (BuildContext)=> ShopPage(ref: ref.child('details/$userId'),farmerDetails: firebaseDetails[userId],)));
         //call shop
       }
       print('user exists $userId');

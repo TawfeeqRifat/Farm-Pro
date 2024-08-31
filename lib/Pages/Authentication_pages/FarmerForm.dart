@@ -106,7 +106,11 @@ class _FarmerformState extends State<Farmerform> {
           },
           "about" : DescripionController.text,
           "address" : AddressController1.text + "\n" + AddressController2.text + "\n" + AddressController3.text,
-          "farm_type" : domainVals
+          "farm_type" : domainVals,
+          "rating" : {
+            "noOfRating" : 0,
+            "rate" : 0
+          },
       }
       ).catchError((e){
 
@@ -114,7 +118,7 @@ class _FarmerformState extends State<Farmerform> {
         Navigator.pop(context);
 
         success=false;
-        PopUp(context,'$e', 30, Colors.redAccent, FontWeight.w400, "Continue");
+        PopUp(context,'$e');
       });
       if(success==true){
 
@@ -123,7 +127,7 @@ class _FarmerformState extends State<Farmerform> {
 
         Navigator.pop(context);
         Navigator.pop(context);
-        Navigator.push(context, CupertinoPageRoute(builder: (BuildContext)=> ShopPage(ref: _userDetailsRef,mode: 'edit-mode',)));
+        Navigator.push(context, CupertinoPageRoute(builder: (BuildContext)=> ShopPage(ref: _userDetailsRef,mode: 'edit-mode',farmerDetails: _userDetailsRef,)));
       }
     }
   }

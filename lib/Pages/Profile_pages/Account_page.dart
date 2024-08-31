@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farm_pro/customFunction.dart';
 import 'package:farm_pro/global_variable.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -32,7 +34,6 @@ class _AccountPageState extends State<AccountPage> {
     }
 
     bool success=true;
-    var userRef= widget.ref.child('details/$userId');
     if(widget.userDetails['farmer?']){
 
         if(mailController.text.isEmpty){
@@ -77,7 +78,7 @@ class _AccountPageState extends State<AccountPage> {
       for(var i in DomainControllers){
         if(i.text.isNotEmpty) domainVals.add(i.text);
       }
-
+      var userRef= widget.ref.child('details/$userId');
       await userRef.update({
         "name" : nameController.text,
         "contact_details" : {
@@ -89,18 +90,18 @@ class _AccountPageState extends State<AccountPage> {
         "farm_type" : domainVals
       }).catchError((e){
         success=false;
-        PopUp(context,'$e', 30, Colors.redAccent, FontWeight.w400, "Continue");
+        PopUp(context,'$e');
       });
     }
     else{
       //loading animation
       loadAnimation(context);
-
+      var userRef= widget.ref.child('details/$userId');
       await userRef.update({
           "name" : nameController.text
       }).catchError((e){
         success=false;
-        PopUp(context,'$e', 30, Colors.redAccent, FontWeight.w400, "Continue");
+        PopUp(context,'$e');
       });
     }
 
@@ -115,7 +116,7 @@ class _AccountPageState extends State<AccountPage> {
 
       //close animation
       Navigator.of(context).pop();
-      PopUp(context,'Account Updated!', 30, Colors.green, FontWeight.w400, "Continue");
+      PopUp(context,'Account Updated!');
 
 
       setState(() {
@@ -311,7 +312,7 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   farmerDetails(){
-    if(widget.userDetails['farmer?']){
+    if(widget.userDetails['farmer?']==true){
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -432,6 +433,9 @@ class _AccountPageState extends State<AccountPage> {
         ],
       );
     }
+    else{
+
+    }
   }
   //controllers
   late TextEditingController nameController;
@@ -462,20 +466,22 @@ class _AccountPageState extends State<AccountPage> {
   var splittedAddress;
   getDetails(){
     nameController=TextEditingController(text: widget.userDetails['name']);
-    mailController=TextEditingController(text: widget.userDetails['contact_details']['mail_id']);
-    phoneController=TextEditingController(text: widget.userDetails['contact_details']['pno']);
-    DomainControllers=[];
-    for(var i in widget.userDetails['farm_type']){
-      TextEditingController temp = TextEditingController(text: i);
-      DomainControllers.add(temp);
-    }
-    DescriptionController=TextEditingController(text: widget.userDetails['about']);
+    if(widget.userDetails['farmer?']){
+      mailController=TextEditingController(text: widget.userDetails['contact_details']['mail_id']);
+      phoneController=TextEditingController(text: widget.userDetails['contact_details']['pno']);
+      DomainControllers=[];
+      for(var i in widget.userDetails['farm_type']){
+        TextEditingController temp = TextEditingController(text: i);
+        DomainControllers.add(temp);
+      }
+      DescriptionController=TextEditingController(text: widget.userDetails['about']);
 
-    final str=widget.userDetails['address'];
-    splittedAddress=str.split('\n');
-    AddressController1=TextEditingController(text: splittedAddress[0]);
-    AddressController2=TextEditingController(text: splittedAddress[1]);
-    AddressController3=TextEditingController(text: splittedAddress[2]);
+      final str=widget.userDetails['address'];
+      splittedAddress=str.split('\n');
+      AddressController1=TextEditingController(text: splittedAddress[0]);
+      AddressController2=TextEditingController(text: splittedAddress[1]);
+      AddressController3=TextEditingController(text: splittedAddress[2]);
+    }
   }
 
   @override
@@ -517,14 +523,198 @@ class _AccountPageState extends State<AccountPage> {
             ),
 
             VerticalPadding(paddingSize: 20),
-            Expanded(
+
+              Expanded(
               child: SingleChildScrollView(
                 child: Column(
                   children: [
                     //name
                     CustomTextBox2(controller: nameController, Title: "Name",editable: editable,errorText: nameError, errorCondition: nameErrorCondition, ),
-              
-                    farmerDetails(),
+
+                    if(widget.userDetails['farmer?']==true)
+                      farmerDetails(),
+
+                    VerticalPadding(paddingSize: 10),
+
+
+                    //farmer account delete
+                    if(widget.userDetails['farmer?']==true)
+                      Row(
+                      children: [
+                        GestureDetector(
+                          onTap: (){
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext){
+                                  return Center(
+                                    child: Container(
+                                      height: 300,
+                                      width: 300,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(5),
+                                        color: Color(0xffef9a9a),
+                                      ),
+                                      child: Column(
+                                        // mainAxisAlignment: MainAxisAlignment.c,
+                                        children: [
+                                          VerticalPadding(paddingSize: 35),
+                                          DefaultTextStyle(
+                                              style: GoogleFonts.lato(
+                                                fontSize: 28,
+                                                color: myBackground,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                              child: const Text(
+                                                'Are you sure you want to delete your Farmer Account?',
+                                                textAlign: TextAlign.center,
+                                              )
+                                          ),
+                                          // Spacer(),
+                                          VerticalPadding(paddingSize: 30),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            children: [
+
+                                              //cancel
+                                              GestureDetector(
+                                                onTap: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Container(
+                                                    height: 40,
+                                                    width: 100,
+                                                    decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.circular(5),
+                                                        color: darkerGreen),
+                                                    child: Center(
+                                                      child: DefaultTextStyle(
+                                                        style: GoogleFonts.lato(
+                                                          fontWeight: FontWeight.w700,
+                                                          color: myBackground,
+                                                          fontSize: 25,
+                                                        ),
+                                                        child: const Text(
+                                                          'Cancel',
+                                                          textAlign: TextAlign.center,
+                                                        ),
+                                                      ),
+                                                    )
+                                                ),
+                                              ),
+
+                                              HorizontalPadding(paddingSize: 20),
+
+                                              GestureDetector(
+                                                onTap: () async {
+
+                                                  Navigator.pop(context);
+                                                  print("closed");
+
+                                                  //loading animation
+                                                  loadAnimation(context);
+
+                                                  //deleting farmer account
+                                                  var userRef= widget.ref.child('details/$userId');
+                                                  try{
+                                                    await userRef.update(
+                                                        {
+                                                          "about" : null,
+                                                          "address" : null,
+                                                          "contact_details" : null,
+                                                          "farm_type" : null,
+                                                          "farmer?" : false,
+                                                          "rating" : null,
+                                                          "shop" : null,
+                                                        }
+                                                    );
+                                                  } on FirebaseException catch (e){
+                                                    PopUp(context,e);
+                                                  }
+
+                                                  final storageRef = FirebaseStorage.instance.ref();
+                                                  final farmerDBfolderRef = storageRef.child("Farmers/$userId/");
+                                                  try{
+                                                    final listResult = await farmerDBfolderRef.listAll();
+                                                    for(var i in listResult.items){
+                                                      print(i.fullPath);
+                                                      await storageRef.child(i.fullPath).delete();
+                                                      print("deleted");
+                                                    }
+                                                  } on FirebaseException catch (e) {
+                                                    //close loading
+                                                    Navigator.of(context).pop;
+                                                    print("error occured");
+                                                    print(e);
+                                                  }
+
+                                                  print("this worked");
+
+                                                  // close loading
+                                                  Navigator.pop(context);
+
+                                                  print('closed');
+                                                  Navigator.pop(context);
+                                                  PopUp(context, "Farmer Account deleted!");
+
+                                                },
+                                                child: Container(
+                                                    height: 40,
+                                                    width: 100,
+                                                    decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.circular(5),
+                                                        color: Colors.redAccent,
+
+                                                    ),
+                                                    child: Center(
+                                                      child: DefaultTextStyle(
+                                                        style: GoogleFonts.lato(
+                                                          fontWeight: FontWeight.w700,
+                                                          color: myBackground,
+                                                          fontSize: 25,
+                                                        ),
+                                                        child: const Text(
+                                                          'Confirm',
+                                                          textAlign: TextAlign.center,
+
+                                                        ),
+                                                      ),
+                                                    )
+                                                ),
+                                              ),
+                                              HorizontalPadding(paddingSize: 8),
+
+                                            ],
+                                          ),
+                                          VerticalPadding(paddingSize: 8),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                }
+                            );
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.redAccent,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                  "Retire as a Farmer",
+                                style: GoogleFonts.lato(
+                                  color: Colors.white,
+                                  fontSize: 18
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    VerticalPadding(paddingSize: 20),
+
                     
                   ],
                 ),

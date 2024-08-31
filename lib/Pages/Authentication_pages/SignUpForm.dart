@@ -425,10 +425,6 @@ class _SignUpFormState extends State<SignUpForm> {
           "rated" : {
             null: 0
           },
-          "rating" : {
-            "noOfRating" : 0,
-            "rate" : 0
-          },
           "profile" : urlDownload ?? user?.photoURL ?? null
         }
       }).catchError((error){
@@ -438,7 +434,7 @@ class _SignUpFormState extends State<SignUpForm> {
 
         print("error: $error");
         success=false;
-        PopUp(context,'$error!', 30, Colors.redAccent, FontWeight.w400, "Continue");
+        PopUp(context,'$error!');
       });
       if(success){
 

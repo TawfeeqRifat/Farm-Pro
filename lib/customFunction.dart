@@ -7,7 +7,7 @@ import 'Utilities/CustomWidgets.dart';
 import 'Utilities/custom.dart';
 
 //pop-up message window
-Future PopUp(context,message,double? fontsize,Color? fontcolor,FontWeight? fontweight,String? ButtonText){
+Future PopUp(context,message,{double? fontsize=30,Color? fontcolor=Colors.redAccent,FontWeight? fontweight=FontWeight.w400, String? ButtonText='Continue'}){
   return showDialog(
       context: context,
       builder: (BuildContext context) {

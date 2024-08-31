@@ -115,7 +115,7 @@ class _SignUpPageState extends State<SignUpPage> {
     }
   }
    void ThrowError(e){
-     PopUp(context, "$e!", 30, Colors.redAccent, FontWeight.w400,"Okay");
+     PopUp(context, "$e!", ButtonText : "Okay");
    }
   @override
   void initState() {

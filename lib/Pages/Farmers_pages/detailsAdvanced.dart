@@ -14,11 +14,12 @@ class DetailsAdvanced extends StatefulWidget {
 }
 
 class _DetailsAdvancedState extends State<DetailsAdvanced> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: myBackground,
-      
+
       appBar: AppBar(
         scrolledUnderElevation: 0.0,
         backgroundColor: myBackground,

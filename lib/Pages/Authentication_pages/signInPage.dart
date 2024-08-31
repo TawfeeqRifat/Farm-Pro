@@ -96,7 +96,7 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
         //too many attempts
         else if(e.code=="too-many-requests"){
           PopUp(
-            context, "Too Many Attempts! \nTry Again Later.", 30, Colors.redAccent,FontWeight.w400,"Okay");
+            context, "Too Many Attempts! \nTry Again Later.",ButtonText: "Okay");
         }
 
       }
@@ -120,7 +120,7 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
 
     try{
 
-      PopUp(context, "Password Reset\nEmail Sent!",30,Colors.black,FontWeight.w400,"Continue");
+      PopUp(context, "Password Reset\nEmail Sent!");
 
     } on FirebaseAuthException catch (e){
 
@@ -138,7 +138,7 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
       //too many attempts
       else if(e.code=="too-many-requests"){
         PopUp(
-            context, "Too Many Attempts! \nTry Again Later.", 30, Colors.redAccent,FontWeight.w400,"Okay");
+            context, "Too Many Attempts! \nTry Again Later.", ButtonText: "Okay");
       }
     }
 

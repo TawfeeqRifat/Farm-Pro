@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
@@ -30,20 +31,24 @@ class DetailsPage extends StatefulWidget {
 
 class _DetailsPageState extends State<DetailsPage> {
 
+  List<AgrItemCard> items=[];
+
+  @override
+  void initState(){
+    super.initState();
+    print(widget.farmerDetail['shop']);
+    if(widget.farmerDetail['shop']!=null){
+      for(dynamic i in widget.farmerDetail['shop'].keys){
+        setState(() {
+          items.add(AgrItemCard(itemName: widget.farmerDetail['shop'][i]['itemName'], itemLink: widget.farmerDetail['shop'][i]['itemLink'],itemStatus: widget.farmerDetail['shop'][i]['itemStatus'],));
+        });print(i);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-
-
-    List<AgrItemCard> items=[
-      const AgrItemCard(itemName: 'Onion',itemLink: 'https://cdn.pixabay.com/photo/2020/05/18/15/54/onion-5187140_640.jpg',itemStatus: 1),
-      const AgrItemCard(itemName: 'Beans',itemLink: 'https://seed2plant.in/cdn/shop/products/Beansseeds.jpg?v=1603967248',itemStatus: 2,),
-      const AgrItemCard(itemName: 'Tomato',itemLink: 'https://images.pexels.com/photos/533280/pexels-photo-533280.jpeg?cs=srgb&dl=pexels-pixabay-533280.jpg&fm=jpg',itemStatus: 3,),
-      const AgrItemCard(itemName: 'Beans',itemLink: 'https://seed2plant.in/cdn/shop/products/Beansseeds.jpg?v=1603967248',itemStatus: 1,),
-      const AgrItemCard(itemName: 'Onion',itemLink: 'https://cdn.pixabay.com/photo/2020/05/18/15/54/onion-5187140_640.jpg',itemStatus: 2),
-      const AgrItemCard(itemName: 'Beans',itemLink: 'https://seed2plant.in/cdn/shop/products/Beansseeds.jpg?v=1603967248',itemStatus: 3,),
-      const AgrItemCard(itemName: 'Tomato',itemLink: 'https://images.pexels.com/photos/533280/pexels-photo-533280.jpeg?cs=srgb&dl=pexels-pixabay-533280.jpg&fm=jpg',itemStatus: 1,),
-      const AgrItemCard(itemName: 'Beans',itemLink: 'https://seed2plant.in/cdn/shop/products/Beansseeds.jpg?v=1603967248',itemStatus: 2,),
-    ];
+    
     items.sort((a,b)=>a.itemStatus.compareTo(b.itemStatus));
     String farmerRating;
     if(widget.farmerDetail['rating']['rate']<1.0){
@@ -306,6 +311,21 @@ class _DetailsPageState extends State<DetailsPage> {
                   )
               ),
               const VerticalPadding(paddingSize: 10),
+
+              //when shop is empty
+              if(items.length<1)
+                Padding(
+                  padding: const EdgeInsets.only(top:50.0),
+                  child: Text('Shop is empty!',
+                    style: GoogleFonts.lato(
+                      color: Colors.black,
+                      fontSize: 50,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+
               Expanded(
                 // height: 552,
                 child: SingleChildScrollView(
@@ -331,7 +351,7 @@ class _DetailsPageState extends State<DetailsPage> {
 class AgrItemCard extends StatefulWidget {
   const AgrItemCard({super.key,required this.itemName, required this.itemLink, this.itemStatus });
   final String itemName;
-  final String itemLink;
+  final String? itemLink;
   final dynamic itemStatus;
   @override
   State<AgrItemCard> createState() => _AgrItemCardState();
@@ -340,10 +360,10 @@ class AgrItemCard extends StatefulWidget {
 class _AgrItemCardState extends State<AgrItemCard> {
   @override
   Widget build(BuildContext context) {
-    String status=(widget.itemStatus==1)?"Available":(widget.itemStatus==2)?"Coming\nSoon":"Out of\nStock";
-    Color statusColour=(widget.itemStatus==1)?Colors.green:(widget.itemStatus==2)?Colors.grey:Colors.white;
-    Color cardColor= (widget.itemStatus==1 || widget.itemStatus==2)?Color(0xffe1f1e4):Color(0xffa7a7a7);
-    Color imageColor=(widget.itemStatus==1 || widget.itemStatus==2)?Colors.white:Color(0xffa7a7a7);
+    String status=widget.itemStatus;
+    Color statusColour=(widget.itemStatus=="Available")?Colors.green:(widget.itemStatus=="Coming Soon")?Colors.grey:Colors.white;
+    Color cardColor= (widget.itemStatus=="Available" || widget.itemStatus=="Coming Soon")?Color(0xffe1f1e4):Color(0xffa7a7a7);
+    Color imageColor=(widget.itemStatus=="Available" || widget.itemStatus=="Coming Soon")?Colors.white:Color(0xffa7a7a7);
 
     void viewItem(imageLink){
       showDialog(context: context,
@@ -399,7 +419,8 @@ class _AgrItemCardState extends State<AgrItemCard> {
                 width: 65,
 
                 child: GestureDetector(
-                  onTap: (){viewItem(widget.itemLink);},
+                  onTap: (){
+                    viewItem( widget.itemLink ?? placeholderItemLink);},
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: ColorFiltered(
@@ -409,7 +430,7 @@ class _AgrItemCardState extends State<AgrItemCard> {
 
                       ),
                       child: CachedNetworkImage(
-                        imageUrl: widget.itemLink,
+                        imageUrl: widget.itemLink ?? placeholderItemLink,
                         fit: BoxFit.cover,
                         //color: cardColor==Color(0xffCDCDCD)?Color(0xffCDCDCD):Colors.green,
                         // ,
@@ -568,7 +589,7 @@ class _RatingWidgetState extends State<RatingWidget> {
                     }).catchError((e){
                       debugPrint(e);
                       success=false;
-                      PopUp(context,'$e', 30, Colors.redAccent, FontWeight.w400, "Continue");
+                      PopUp(context,'$e');
                     });
 
                     //changing user data
@@ -576,7 +597,7 @@ class _RatingWidgetState extends State<RatingWidget> {
                       farmerId: curRating
                     }).catchError((e){
                       success2=false;
-                      PopUp(context,'$e', 30, Colors.redAccent, FontWeight.w400, "Continue");
+                      PopUp(context,'$e');
                     });
 
                     if(success && success2) {
