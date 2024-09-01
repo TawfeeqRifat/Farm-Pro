@@ -9,6 +9,7 @@ import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../customFunction.dart';
 
@@ -106,6 +107,17 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
 
   }
 
+
+  static final auth = FirebaseAuth.instance;
+
+  Future<void> resetPassword({required String email}) async {
+    await auth.sendPasswordResetEmail(email: email)
+        .then((value) => print("password reset successfull"))
+        .catchError(
+            (e) => print("pass not reset :_( $e"));
+
+  }
+
   forgotPassword() async {
     if(emailController.text.isEmpty){
       setState(() {
@@ -119,13 +131,11 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
     loadAnimation(context);
 
     try{
+      await auth.sendPasswordResetEmail(email: emailController.text);
+    } on FirebaseException catch (e) {
 
-      PopUp(context, "Password Reset\nEmail Sent!");
-
-    } on FirebaseAuthException catch (e){
-
-      //close loading
-      Navigator.of(context).pop();
+      //close animation
+      Navigator.pop(context);
 
       if(e.code=='invalid-credential'){
         setState((){
@@ -134,14 +144,19 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
           wrongPassword =true;
         });
       }
-
       //too many attempts
       else if(e.code=="too-many-requests"){
         PopUp(
             context, "Too Many Attempts! \nTry Again Later.", ButtonText: "Okay");
       }
+      else{
+        PopUp(context, e);
+      }
     }
 
+    //close animation
+    Navigator.pop(context);
+    PopUp(context, "Password Reset\nEmail Sent!",fontcolor: Colors.green);
 
   }
 

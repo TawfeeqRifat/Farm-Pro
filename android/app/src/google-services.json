@@ -15,11 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "539505907325-aq6s0lkcbu40kq0crvpcc77botl6jh9f.apps.googleusercontent.com",
+          "client_id": "539505907325-nlm9ugbhjg7rqfv7vv5q4hvr3qn05gn9.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.farm_pro",
-            "certificate_hash": "d97eb8d8fbe51de39b938f14cd89fb9f5f69a8cd"
+            "certificate_hash": "79d3d4aedc89020ebf753f4d561bccde6b7d52fb"
           }
         },
         {
