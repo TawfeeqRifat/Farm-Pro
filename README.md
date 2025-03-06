@@ -2,4 +2,4 @@
 
  A Farm-based application to connect the farmers with retailers.
 
- FarmPro not only users to connect with farmers, but also allows farmers to get to know all the latest schemes available for them, in few clicks.
+ FarmPro helps users connect with farmers and makes it easy for farmers to find the latest schemes in just a few clicks.
